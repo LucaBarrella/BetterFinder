@@ -32,7 +32,12 @@ private struct TerminalHeaderBar: View {
     let browser: BrowserState
 
     var body: some View {
-        TerminalHeaderNSRep(browser: browser)
+        // Access observable properties so SwiftUI re-renders (and calls updateNSView)
+        // whenever they change — this keeps the NSView header in sync.
+        let _ = browser.terminalCurrentURL
+        let _ = browser.terminalSyncEnabled
+        let _ = browser.selectedFileItems.count
+        return TerminalHeaderNSRep(browser: browser)
             .frame(height: 30)
     }
 }
@@ -58,7 +63,9 @@ final class TerminalHeaderNSView: NSView {
 
     // Toolbar subviews
     private let shellLabel    = NSTextField(labelWithString: "")
+    private let pathLabel     = NSTextField(labelWithString: "")
     private let syncButton    = NSButton()
+    private let goHereButton  = NSButton()
     private let insertButton  = NSButton()
     private let fontMinusBtn  = NSButton()
     private let fontPlusBtn   = NSButton()
@@ -74,12 +81,29 @@ final class TerminalHeaderNSView: NSView {
 
     func update() {
         shellLabel.stringValue = browser.shellName
+
+        // Show abbreviated current terminal directory (or nothing if unknown)
+        if let termURL = browser.terminalCurrentURL {
+            pathLabel.stringValue = abbreviatedPath(termURL)
+            pathLabel.isHidden = false
+        } else {
+            pathLabel.isHidden = true
+        }
+
         let syncImg = browser.terminalSyncEnabled
             ? "arrow.left.arrow.right.circle.fill"
             : "arrow.left.arrow.right.circle"
         syncButton.image = NSImage(systemSymbolName: syncImg, accessibilityDescription: nil)
         let hasSelection = !browser.selectedFileItems.isEmpty
         insertButton.isEnabled = hasSelection
+    }
+
+    private func abbreviatedPath(_ url: URL) -> String {
+        let path = url.path(percentEncoded: false)
+        let home = URL.homeDirectory.path(percentEncoded: false)
+        if path == home            { return "~" }
+        if path.hasPrefix(home + "/") { return "~" + path.dropFirst(home.count) }
+        return path
     }
 
     private func setup() {
@@ -100,17 +124,29 @@ final class TerminalHeaderNSView: NSView {
         shellLabel.stringValue = browser.shellName
         addSubview(shellLabel)
 
+        // Terminal current-path label (right of shell name)
+        pathLabel.font = .systemFont(ofSize: 10, weight: .regular)
+        pathLabel.textColor = .tertiaryLabelColor
+        pathLabel.isHidden = true
+        addSubview(pathLabel)
+
         // Sync button
         configureButton(syncButton,
             image: "arrow.left.arrow.right.circle.fill",
             target: self, action: #selector(toggleSync))
-        syncButton.toolTip = "Toggle directory sync"
+        syncButton.toolTip = "Toggle directory sync (GUI ↔ terminal)"
+
+        // "Go here" — sends the file panel's current directory to the terminal (one-shot)
+        configureButton(goHereButton,
+            image: "arrow.right.to.line",
+            target: self, action: #selector(goHere))
+        goHereButton.toolTip = "cd terminal to current folder"
 
         // Insert path button
         configureButton(insertButton,
             image: "arrow.down.doc",
             target: self, action: #selector(insertPath))
-        insertButton.toolTip = "Insert selected file path"
+        insertButton.toolTip = "Insert selected file path into terminal"
 
         // Font size buttons
         configureButton(fontMinusBtn,
@@ -126,7 +162,7 @@ final class TerminalHeaderNSView: NSView {
             target: self, action: #selector(closeTerminal))
         closeButton.toolTip = "Close terminal (F4)"
 
-        [syncButton, insertButton, fontMinusBtn, fontPlusBtn, closeButton].forEach { addSubview($0) }
+        [syncButton, goHereButton, insertButton, fontMinusBtn, fontPlusBtn, closeButton].forEach { addSubview($0) }
 
         // Cursor
         addCursorRect(NSRect(origin: .zero, size: NSSize(width: 10_000, height: 30)),
@@ -160,12 +196,20 @@ final class TerminalHeaderNSView: NSView {
         fontPlusBtn.frame    = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
         fontMinusBtn.frame   = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW + 4
         insertButton.frame   = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
+        goHereButton.frame   = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
         syncButton.frame     = NSRect(x: x, y: 0, width: btnW, height: h)
 
-        // Left: shell label
+        // Left: shell name + terminal path
         shellLabel.sizeToFit()
-        shellLabel.frame = NSRect(x: 10, y: (h - shellLabel.frame.height)/2,
-                                  width: 100, height: shellLabel.frame.height)
+        let labelH = shellLabel.frame.height
+        shellLabel.frame = NSRect(x: 10, y: (h - labelH) / 2,
+                                  width: shellLabel.frame.width, height: labelH)
+
+        pathLabel.sizeToFit()
+        let pathX = shellLabel.frame.maxX + 6
+        pathLabel.frame = NSRect(x: pathX, y: (h - pathLabel.frame.height) / 2,
+                                 width: min(pathLabel.frame.width, x - pathX - 4),
+                                 height: pathLabel.frame.height)
     }
 
     // MARK: - Drag to resize
@@ -194,6 +238,10 @@ final class TerminalHeaderNSView: NSView {
     @objc private func toggleSync() {
         browser.terminalSyncEnabled.toggle()
         update()
+    }
+
+    @objc private func goHere() {
+        browser.terminalChangeDirectory?(browser.currentURL)
     }
 
     @objc private func insertPath() {

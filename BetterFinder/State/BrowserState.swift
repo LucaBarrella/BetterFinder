@@ -24,6 +24,9 @@ final class BrowserState {
     /// Last path component of the user's login shell, resolved once at init.
     let shellName: String
 
+    /// Current working directory of the terminal (set via OSC 7), always tracked.
+    var terminalCurrentURL: URL?
+
     /// Set by SwiftTermView when the terminal view is created.
     var terminalSendText:        ((String) -> Void)?
     var terminalChangeDirectory: ((URL) -> Void)?

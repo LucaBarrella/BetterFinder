@@ -49,6 +49,16 @@ struct FilePaneView: View {
         Table(sortedItems, selection: $bnd.selectedItems, sortOrder: $sortOrder) {
             TableColumn("Name", value: \.name) { item in
                 FileNameCell(item: item, browser: browser)
+                    .onDrag {
+                        // When dragging a selected item, carry all selected items' paths.
+                        let urls: [URL]
+                        if browser.selectedItems.contains(item.id) && browser.selectedItems.count > 1 {
+                            urls = browser.selectedFileItems.map(\.url)
+                        } else {
+                            urls = [item.url]
+                        }
+                        return NSItemProvider.makeFileDrag(urls: urls)
+                    }
             }
             .width(min: 160, ideal: 280)
 
@@ -220,6 +230,31 @@ private struct FileNameCell: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Drag helper
+
+private extension NSItemProvider {
+    /// Creates an item provider suitable for dragging file URLs.
+    /// - Provides the first URL as a fileURL item so external apps (Finder, Discord…) can receive it.
+    /// - Provides all paths as a plain-text string so terminal views can insert them as shell tokens.
+    static func makeFileDrag(urls: [URL]) -> NSItemProvider {
+        let provider = NSItemProvider()
+
+        // File URL registration — external apps can receive the actual file
+        if let first = urls.first {
+            provider.registerObject(first as NSURL, visibility: .all)
+        }
+
+        // Plain text — shell-quoted paths for terminal insertion (all items)
+        let text = urls
+            .map { "'" + $0.path(percentEncoded: false)
+                            .replacingOccurrences(of: "'", with: "'\\''") + "'" }
+            .joined(separator: " ")
+        provider.registerObject(text as NSString, visibility: .all)
+
+        return provider
     }
 }
 

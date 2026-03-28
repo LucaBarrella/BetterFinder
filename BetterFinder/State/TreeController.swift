@@ -57,6 +57,16 @@ final class TreeController {
         rebuild()
     }
 
+    /// Expands ONLY the node exactly matching `url` (no ancestors).
+    /// Suitable for Favorites where expanding ancestors would be wrong.
+    func expandNode(matching url: URL, service: FileSystemService, showHidden: Bool) async {
+        let target = url.standardizedFileURL
+        for root in roots {
+            await expandExact(node: root, url: target, service: service, showHidden: showHidden)
+        }
+        rebuild()
+    }
+
     // MARK: - Rebuild
 
     /// Rebuilds `flatNodes` from the current tree state.
@@ -77,6 +87,22 @@ final class TreeController {
         guard node.isExpanded, let children = node.children else { return }
         for child in children {
             collect(node: child, depth: depth + 1, into: &result)
+        }
+    }
+
+    private func expandExact(node: TreeNode, url: URL, service: FileSystemService, showHidden: Bool) async {
+        if node.url.standardizedFileURL == url {
+            if node.children == nil {
+                await node.loadChildrenIfNeeded(service: service, showHidden: showHidden)
+            }
+            node.isExpanded = true
+            return
+        }
+        // Only recurse into already-expanded nodes (avoid loading the whole tree)
+        if node.isExpanded, let children = node.children {
+            for child in children {
+                await expandExact(node: child, url: url, service: service, showHidden: showHidden)
+            }
         }
     }
 

@@ -6,28 +6,64 @@ struct SidebarView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 0) {
 
-                // MARK: Favorites
-                SectionHeader(title: "Favorites")
+                    // MARK: Favorites
+                    SectionHeader(title: "Favorites")
 
-                ForEach(appState.favoritesController.flatNodes) { flat in
-                    TreeRow(flatNode: flat, controller: appState.favoritesController)
+                    ForEach(appState.favoritesController.flatNodes) { flat in
+                        TreeRow(flatNode: flat, controller: appState.favoritesController)
+                            .id(flat.id)
+                    }
+
+                    // MARK: Locations
+                    SectionHeader(title: "Locations")
+                        .padding(.top, 6)
+
+                    ForEach(appState.treeController.flatNodes) { flat in
+                        TreeRow(flatNode: flat, controller: appState.treeController)
+                            .id(flat.id)
+                    }
                 }
-
-                // MARK: Locations
-                SectionHeader(title: "Locations")
-                    .padding(.top, 6)
-
-                ForEach(appState.treeController.flatNodes) { flat in
-                    TreeRow(flatNode: flat, controller: appState.treeController)
+                .padding(.vertical, 4)
+            }
+            .frame(minWidth: 200, idealWidth: 230)
+            .background(Color(nsColor: .controlBackgroundColor))
+            // Auto-expand the sidebar tree whenever the active browser navigates
+            // (handles both GUI clicks and terminal cd commands via OSC 7)
+            .onChange(of: appState.activeBrowser.currentURL) { _, newURL in
+                Task {
+                    // Expand ancestors in Locations tree so the folder is visible
+                    await appState.treeController.expandPath(
+                        to: newURL,
+                        service: appState.fileSystemService,
+                        showHidden: appState.preferences.showHiddenFiles
+                    )
+                    // Expand the target node itself (show its children)
+                    await appState.treeController.expandNode(
+                        matching: newURL,
+                        service: appState.fileSystemService,
+                        showHidden: appState.preferences.showHiddenFiles
+                    )
+                    // Expand Favorites entry if it matches exactly
+                    await appState.favoritesController.expandNode(
+                        matching: newURL,
+                        service: appState.fileSystemService,
+                        showHidden: appState.preferences.showHiddenFiles
+                    )
+                    // Scroll to the matching node
+                    let activeID = appState.treeController.flatNodes
+                        .first { $0.node.url.standardizedFileURL == newURL.standardizedFileURL }?.id
+                        ?? appState.favoritesController.flatNodes
+                            .first { $0.node.url.standardizedFileURL == newURL.standardizedFileURL }?.id
+                    if let id = activeID {
+                        withAnimation { proxy.scrollTo(id, anchor: .center) }
+                    }
                 }
             }
-            .padding(.vertical, 4)
         }
-        .frame(minWidth: 200, idealWidth: 230)
-        .background(Color(nsColor: .controlBackgroundColor))
     }
 }
 
@@ -85,10 +121,9 @@ struct TreeRow: View {
                         Image(systemName: node.isExpanded ? "chevron.down" : "chevron.right")
                             .font(.system(size: 9, weight: .semibold))
                             .foregroundStyle(.tertiary)
-                            .rotationEffect(node.isExpanded ? .zero : .zero) // explicit so SwiftUI tracks
                     }
                 }
-                .frame(width: 22, height: 26)  // full row height → easy tap
+                .frame(width: 22, height: 26)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -130,6 +165,9 @@ struct TreeRow: View {
                 : Color.clear
         )
         .contentShape(Rectangle())
+        .onDrag {
+            NSItemProvider(object: node.url as NSURL)
+        }
         .contextMenu {
             Button("Open in Pane") {
                 appState.activeBrowser.navigate(to: node.url)
@@ -146,11 +184,12 @@ struct TreeRow: View {
                     forType: .string
                 )
             }
+            Divider()
+            // Open in BetterFinder's integrated terminal (navigates both file panel + terminal)
             Button("Open in Terminal") {
-                let path = node.url.path(percentEncoded: false)
-                    .replacingOccurrences(of: "'", with: "'\\''")
-                let script = "tell application \"Terminal\"\ndo script \"cd '\\(path)'\"\nactivate\nend tell"
-                NSAppleScript(source: script)?.executeAndReturnError(nil)
+                appState.activeBrowser.navigate(to: node.url)
+                appState.activeBrowser.showTerminal = true
+                appState.activeBrowser.terminalChangeDirectory?(node.url)
             }
         }
     }
