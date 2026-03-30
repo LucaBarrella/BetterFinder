@@ -10,6 +10,9 @@ final class BrowserState {
     var currentURL: URL
     var items: [FileItem] = []
     var selectedItems: Set<FileItem.ID> = []
+    /// URL of the first selected item — set directly from the table's selection
+    /// callback so it never goes stale when items are reloaded with new UUIDs.
+    var lastSelectedURL: URL? = nil
     var isLoading = false
     var searchQuery = ""
     var searchOptions = SearchOptions()
@@ -146,6 +149,7 @@ final class BrowserState {
         historyIndex = history.count - 1
         currentURL = url
         selectedItems = []
+        lastSelectedURL = nil
 
         // Clear search when navigating to a new location
         clearSearch()
@@ -192,6 +196,7 @@ final class BrowserState {
     private func restoreEntry(_ entry: HistoryEntry) {
         currentURL = entry.url
         selectedItems = []
+        lastSelectedURL = nil
 
         if let snap = entry.searchSnapshot {
             // Restore search state from cache — no query re-execution needed
@@ -236,7 +241,9 @@ final class BrowserState {
         updateWatcher()
     }
 
-    private func refresh() async {
+    /// Refreshes the directory listing without showing a loading indicator.
+    /// Safe to call for in-place operations (rename, trash, drop) — keeps scroll position stable.
+    func silentRefresh() async {
         guard !isLoading else { return }
         do {
             let loaded = try await fileSystemService.children(of: currentURL, showHidden: showHiddenCache)
@@ -290,7 +297,7 @@ final class BrowserState {
         watchedURL = currentURL
         watcher = DirectoryWatcher(url: currentURL) { [weak self] in
             guard let self else { return }
-            Task { await self.refresh() }
+            Task { await self.silentRefresh() }
         }
     }
 }

@@ -24,6 +24,9 @@ fileprivate final class BFTableView: NSTableView {
     var onActivate: (() -> Void)?
     var onKeyDown: ((NSEvent) -> Bool)?
     var onTripleClickRow: ((Int) -> Void)?
+    var undoManagerProvider: (() -> UndoManager?)?
+
+    override var undoManager: UndoManager? { undoManagerProvider?() ?? super.undoManager }
 
     override func menu(for event: NSEvent) -> NSMenu? {
         let row = row(at: convert(event.locationInWindow, from: nil))
@@ -131,6 +134,9 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         // Expose inline rename trigger to BrowserState (used by Operations Bar, menu bar, ⌘R)
         browser.triggerInlineRename = { [weak self] in self?.beginInlineRenameForSelection() }
 
+        // Wire our app's UndoManager so ⌘Z / ⌘⇧Z work natively via the responder chain
+        tableView.undoManagerProvider = { [weak self] in self?.appState.undoManager }
+
         // Scroll view
         scrollView.documentView  = tableView
         scrollView.hasVerticalScroller   = true
@@ -161,7 +167,13 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             tableView.sortDescriptors = [desiredSD]
         }
 
+        // Preserve scroll position: reloadData() resets NSScrollView to the top,
+        // causing the visible "jump" after drag-drop, watcher refreshes, etc.
+        let savedOrigin = scrollView.contentView.bounds.origin
         tableView.reloadData()
+        scrollView.contentView.scroll(to: savedOrigin)
+        scrollView.reflectScrolledClipView(scrollView.contentView)
+
         if changed { syncSelection() }
     }
 
@@ -171,6 +183,15 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         for (i, item) in items.enumerated() where browser.selectedItems.contains(item.id) {
             idx.insert(i)
         }
+
+        // UUID fallback: if no match (items reloaded with new UUIDs) but we have a
+        // remembered URL, restore selection by URL so preview stays consistent.
+        if idx.isEmpty, let lastURL = browser.lastSelectedURL,
+           let row = items.firstIndex(where: { $0.url.standardizedFileURL == lastURL.standardizedFileURL }) {
+            idx.insert(row)
+            browser.selectedItems = [items[row].id]
+        }
+
         tableView.selectRowIndexes(idx, byExtendingSelection: false)
         suppressSelectionSync = false
     }
@@ -236,30 +257,13 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         }
         guard !urlsToMove.isEmpty else { return false }
 
-        let showHidden = appState.preferences.showHiddenFiles
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            var changed = false
-            for source in urlsToMove {
-                let dstPath = destination.path(percentEncoded: false)
-                let srcPath = source.path(percentEncoded: false)
-                guard source != destination,
-                      !dstPath.hasPrefix(srcPath + "/") else { continue }
-                let dest = destination.appendingPathComponent(source.lastPathComponent)
-                do {
-                    try FileManager.default.moveItem(at: source, to: dest)
-                    changed = true
-                } catch {
-                    if (try? FileManager.default.copyItem(at: source, to: dest)) != nil {
-                        changed = true
-                    }
-                }
-            }
-            if changed {
-                DispatchQueue.main.async { [weak self] in
-                    Task { await self?.browser.load(showHidden: showHidden) }
-                }
-            }
+        let pairs = urlsToMove.map { src in
+            (from: src, to: destination.appendingPathComponent(src.lastPathComponent))
         }
+        // Route through moveFiles so the operation is undo-registered (⌘Z reverses it).
+        // Reload both panes: the source directory may live in the other pane.
+        appState.moveFiles(pairs, actionName: "Move",
+                           reloadBrowsers: [appState.primaryBrowser, appState.secondaryBrowser])
         return true
     }
 
@@ -455,10 +459,14 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
 
     func tableViewSelectionDidChange(_ notification: Notification) {
         guard !suppressSelectionSync else { return }
-        let ids = Set(tableView.selectedRowIndexes.compactMap {
-            $0 < items.count ? items[$0].id : nil
-        })
+        let selectedRows = tableView.selectedRowIndexes
+        let ids = Set(selectedRows.compactMap { $0 < items.count ? items[$0].id : nil })
         browser.selectedItems = ids
+        // Store URL directly — bypasses UUID identity so preview never goes stale
+        // after a directory reload assigns new UUIDs to the same physical files.
+        browser.lastSelectedURL = selectedRows.min().flatMap {
+            $0 < items.count ? items[$0].url : nil
+        }
     }
 
     // MARK: - Sorting
@@ -634,17 +642,18 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
                   newName != item.name
             else { return }
             let trimmed = newName.trimmingCharacters(in: .whitespaces)
-            let newURL = item.url.deletingLastPathComponent().appendingPathComponent(trimmed)
+            let oldURL = item.url
+            let newURL = oldURL.deletingLastPathComponent().appendingPathComponent(trimmed)
             do {
-                try FileManager.default.moveItem(at: item.url, to: newURL)
+                try FileManager.default.moveItem(at: oldURL, to: newURL)
+                appState.registerRenameUndo(from: oldURL, to: newURL, in: browser)
             } catch {
                 let alert = NSAlert()
                 alert.messageText = "Could Not Rename"
                 alert.informativeText = error.localizedDescription
                 alert.runModal()
             }
-            let showHidden = appState.preferences.showHiddenFiles
-            Task { await self.browser.load(showHidden: showHidden) }
+            Task { await self.browser.silentRefresh() }
         }
     }
 
@@ -657,9 +666,8 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     }
 
     @objc private func trashSelected() {
-        for idx in tableView.selectedRowIndexes where idx < items.count {
-            try? FileManager.default.trashItem(at: items[idx].url, resultingItemURL: nil)
-        }
+        activateThisPane()
+        appState.trashInActivePane()
     }
 }
 

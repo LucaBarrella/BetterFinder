@@ -23,7 +23,9 @@ struct ContentView: View {
     // MARK: - Detail Area
 
     private var previewURL: URL? {
-        appState.activeBrowser.selectedFileItems.first?.url
+        // Use lastSelectedURL (set directly from the table callback by URL, not UUID)
+        // so the preview survives directory reloads that reassign item UUIDs.
+        appState.activeBrowser.lastSelectedURL
     }
 
     @ViewBuilder
@@ -55,12 +57,7 @@ struct ContentView: View {
                 PathBarView(browser: appState.primaryBrowser)
                 Divider()
             }
-            FilePaneView(browser: appState.primaryBrowser)
-            if appState.primaryBrowser.showTerminal {
-                Divider()
-                TerminalPanelView(browser: appState.primaryBrowser)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
+            filePaneWithTerminal(browser: appState.primaryBrowser)
             if appState.preferences.showStatusBar {
                 Divider()
                 StatusBarView(browser: appState.primaryBrowser)
@@ -68,7 +65,6 @@ struct ContentView: View {
             Divider()
             OperationsBarView()
         }
-        .animation(.easeInOut(duration: 0.2), value: appState.primaryBrowser.showTerminal)
     }
 
     private var dualPaneLayout: some View {
@@ -110,22 +106,37 @@ struct ContentView: View {
                 PathBarView(browser: browser)
                 Divider()
             }
-            FilePaneView(browser: browser)
-                .onTapGesture { onActivate() }
-            if browser.showTerminal {
-                Divider()
-                TerminalPanelView(browser: browser)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
+            filePaneWithTerminal(browser: browser, onActivate: onActivate)
             // Per-pane status bar (replaces the shared one in dual-pane)
             if appState.preferences.showStatusBar {
                 Divider()
                 StatusBarView(browser: browser)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: browser.showTerminal)
         .overlay(alignment: .top) {
             if isActive { Rectangle().fill(Color.accentColor).frame(height: 2) }
+        }
+    }
+
+    /// Returns a VSplitView (file pane on top, terminal below) when the terminal
+    /// is visible, or just the file pane when it's hidden.
+    /// VSplitView provides the native macOS drag handle — no custom resize needed.
+    @ViewBuilder
+    private func filePaneWithTerminal(
+        browser: BrowserState,
+        onActivate: (() -> Void)? = nil
+    ) -> some View {
+        if browser.showTerminal {
+            VSplitView {
+                FilePaneView(browser: browser)
+                    .frame(minHeight: 80)
+                    .applyIf(onActivate != nil) { $0.onTapGesture { onActivate?() } }
+                TerminalPanelView(browser: browser)
+                    .frame(minHeight: 60, idealHeight: browser.terminalHeight)
+            }
+        } else {
+            FilePaneView(browser: browser)
+                .applyIf(onActivate != nil) { $0.onTapGesture { onActivate?() } }
         }
     }
 }
@@ -191,6 +202,16 @@ private struct PaneSearchField: NSViewRepresentable {
         func controlTextDidChange(_ obj: Notification) {
             if let f = obj.object as? NSSearchField { text = f.stringValue }
         }
+    }
+}
+
+// MARK: - View helper
+
+private extension View {
+    /// Conditionally applies a transform to the view.
+    @ViewBuilder
+    func applyIf<T: View>(_ condition: Bool, transform: (Self) -> T) -> some View {
+        if condition { transform(self) } else { self }
     }
 }
 

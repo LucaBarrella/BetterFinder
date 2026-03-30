@@ -153,15 +153,24 @@ private struct VideoPreview: NSViewRepresentable {
 
     func makeNSView(context: Context) -> AVPlayerView {
         let v = AVPlayerView()
-        v.controlsStyle            = .inline
+        v.controlsStyle               = .inline
         v.showsFullScreenToggleButton = false
-        let player = AVPlayer(url: url)
-        v.player = player
-        context.coordinator.player = player
+        load(url, into: v, coordinator: context.coordinator)
         return v
     }
 
-    func updateNSView(_ nsView: AVPlayerView, context: Context) {}
+    func updateNSView(_ nsView: AVPlayerView, context: Context) {
+        guard context.coordinator.loadedURL != url else { return }
+        context.coordinator.player?.pause()
+        load(url, into: nsView, coordinator: context.coordinator)
+    }
+
+    private func load(_ url: URL, into v: AVPlayerView, coordinator: Coordinator) {
+        coordinator.loadedURL = url
+        let player = AVPlayer(url: url)
+        v.player = player
+        coordinator.player = player
+    }
 
     static func dismantleNSView(_ nsView: AVPlayerView, coordinator: Coordinator) {
         coordinator.player?.pause()
@@ -169,7 +178,10 @@ private struct VideoPreview: NSViewRepresentable {
         coordinator.player = nil
     }
 
-    final class Coordinator { var player: AVPlayer? }
+    final class Coordinator {
+        var player: AVPlayer?
+        var loadedURL: URL?
+    }
 }
 
 // MARK: - Audio
@@ -214,15 +226,24 @@ private struct AudioPlayerView: NSViewRepresentable {
 
     func makeNSView(context: Context) -> AVPlayerView {
         let v = AVPlayerView()
-        v.controlsStyle            = .inline
+        v.controlsStyle               = .inline
         v.showsFullScreenToggleButton = false
-        let player = AVPlayer(url: url)
-        v.player = player
-        context.coordinator.player = player
+        load(url, into: v, coordinator: context.coordinator)
         return v
     }
 
-    func updateNSView(_ nsView: AVPlayerView, context: Context) {}
+    func updateNSView(_ nsView: AVPlayerView, context: Context) {
+        guard context.coordinator.loadedURL != url else { return }
+        context.coordinator.player?.pause()
+        load(url, into: nsView, coordinator: context.coordinator)
+    }
+
+    private func load(_ url: URL, into v: AVPlayerView, coordinator: Coordinator) {
+        coordinator.loadedURL = url
+        let player = AVPlayer(url: url)
+        v.player = player
+        coordinator.player = player
+    }
 
     static func dismantleNSView(_ nsView: AVPlayerView, coordinator: Coordinator) {
         coordinator.player?.pause()
@@ -230,7 +251,10 @@ private struct AudioPlayerView: NSViewRepresentable {
         coordinator.player = nil
     }
 
-    final class Coordinator { var player: AVPlayer? }
+    final class Coordinator {
+        var player: AVPlayer?
+        var loadedURL: URL?
+    }
 }
 
 // MARK: - Web (HTML, SVG, WebArchive)
@@ -238,22 +262,29 @@ private struct AudioPlayerView: NSViewRepresentable {
 private struct WebPreview: NSViewRepresentable {
     let url: URL
 
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func makeNSView(context: Context) -> WKWebView {
         let cfg = WKWebViewConfiguration()
         cfg.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         let v = WKWebView(frame: .zero, configuration: cfg)
-        load(into: v)
+        load(url, into: v, coordinator: context.coordinator)
         return v
     }
 
     func updateNSView(_ nsView: WKWebView, context: Context) {
-        load(into: nsView)
+        // Only reload if the URL actually changed — avoids blank flash on every SwiftUI re-render
+        guard context.coordinator.loadedURL != url else { return }
+        load(url, into: nsView, coordinator: context.coordinator)
     }
 
-    private func load(into webView: WKWebView) {
-        // Allow read access to the whole file's directory so relative resources load
-        let readBase = url.deletingLastPathComponent()
-        webView.loadFileURL(url, allowingReadAccessTo: readBase)
+    private func load(_ url: URL, into webView: WKWebView, coordinator: Coordinator) {
+        coordinator.loadedURL = url
+        webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+    }
+
+    final class Coordinator {
+        var loadedURL: URL?
     }
 }
 
@@ -304,23 +335,27 @@ private struct TextPreview: NSViewRepresentable {
     private func loadContent(into tv: NSTextView) {
         let capturedURL = url
         Task.detached(priority: .userInitiated) {
-            var text: String
-            if let s = try? String(contentsOf: capturedURL, encoding: .utf8) {
-                text = s
-            } else if let s = try? String(contentsOf: capturedURL, encoding: .isoLatin1) {
-                text = s
-            } else {
-                text = "(Binary or unreadable file)"
-            }
-            // Cap at 300 KB to keep the UI snappy
-            if text.utf8.count > 300_000 {
-                text = String(text.prefix(upTo: text.utf8.index(
-                    text.startIndex, offsetBy: 300_000, limitedBy: text.endIndex
-                ) ?? text.endIndex))
-                text += "\n\n… (file truncated — showing first 300 KB)"
-            }
+            let text = Self.readText(from: capturedURL)
             await MainActor.run { tv.string = text }
         }
+    }
+
+    nonisolated private static func readText(from url: URL) -> String {
+        var text: String
+        if let s = try? String(contentsOf: url, encoding: .utf8) {
+            text = s
+        } else if let s = try? String(contentsOf: url, encoding: .isoLatin1) {
+            text = s
+        } else {
+            return "(Binary or unreadable file)"
+        }
+        if text.utf8.count > 300_000 {
+            let cutoff = text.utf8.index(text.startIndex, offsetBy: 300_000,
+                                         limitedBy: text.endIndex) ?? text.endIndex
+            text = String(text[..<cutoff])
+            text += "\n\n… (file truncated — showing first 300 KB)"
+        }
+        return text
     }
 
     final class Coordinator { weak var textView: NSTextView? }
@@ -446,30 +481,25 @@ struct FileInfoBar: View {
         ].compactMap { $0 }
 
         return ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 0) {
+            Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 2) {
                 ForEach(rows, id: \.0) { label, value in
-                    row(label, value, multiline: label == "Path")
+                    GridRow(alignment: .top) {
+                        Text(label)
+                            .gridColumnAlignment(.trailing)
+                            .foregroundStyle(.secondary)
+                            .fixedSize()
+                        Text(value)
+                            .textSelection(.enabled)
+                            .lineLimit(label == "Path" ? 3 : 2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
             }
+            .font(.system(size: 10))
             .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .padding(.vertical, 6)
         }
         .frame(maxHeight: 150)
-    }
-
-    private func row(_ label: String, _ value: String, multiline: Bool = false) -> some View {
-        HStack(alignment: .top, spacing: 0) {
-            Text(label)
-                .frame(width: 68, alignment: .trailing)
-                .foregroundStyle(.secondary)
-            Text("  ")
-            Text(value)
-                .textSelection(.enabled)
-                .lineLimit(multiline ? 3 : 2)
-            Spacer(minLength: 0)
-        }
-        .font(.system(size: 10))
-        .padding(.vertical, 1.5)
     }
 }
 
@@ -504,8 +534,9 @@ struct FileMetadata {
         let created  = rv?.creationDate.map { formatDate($0) }
 
         // Image dimensions via ImageIO (reads header only, very fast)
+        let isImageExt = imageExtensions.contains(ext)
         let dimensions: String? = await Task.detached(priority: .utility) { () -> String? in
-            guard imageExtensions.contains(ext) else { return nil }
+            guard isImageExt else { return nil }
             guard let src   = CGImageSourceCreateWithURL(url as CFURL, nil),
                   let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil) as? [CFString: Any],
                   let w     = props[kCGImagePropertyPixelWidth]  as? Int,

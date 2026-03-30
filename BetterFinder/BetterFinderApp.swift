@@ -21,6 +21,18 @@ struct BetterFinderApp: App {
             SidebarCommands()
             ToolbarCommands()
 
+            // Replace SwiftUI's default Undo/Redo (which uses its own internal
+            // UndoManager) with explicit calls to AppState.undoManager so that
+            // all file operations (move, trash, rename, new file…) are undoable.
+            CommandGroup(replacing: .undoRedo) {
+                Button("Undo") { appState.undoManager.undo() }
+                    .keyboardShortcut("z", modifiers: .command)
+                    .disabled(!appState.canUndo)
+                Button("Redo") { appState.undoManager.redo() }
+                    .keyboardShortcut("z", modifiers: [.command, .shift])
+                    .disabled(!appState.canRedo)
+            }
+
             CommandGroup(replacing: .newItem) {
                 Button("New File") { appState.newFileInActivePane() }
                     .keyboardShortcut("n", modifiers: [.command, .option])
@@ -101,6 +113,24 @@ struct BetterFinderApp: App {
                     appState.preferences.showPreviewPanel.toggle()
                 }
                 .keyboardShortcut("p", modifiers: [.command, .option])
+
+                Divider()
+
+                // Terminal font size — applied to whichever pane's terminal is visible.
+                // In dual-pane mode, targets the active pane; otherwise the primary pane.
+                Button("Increase Terminal Font Size") {
+                    let b = appState.activeBrowser
+                    b.terminalFontSize = min(24, b.terminalFontSize + 1)
+                }
+                .keyboardShortcut("+", modifiers: .command)
+                .disabled(!appState.activeBrowser.showTerminal)
+
+                Button("Decrease Terminal Font Size") {
+                    let b = appState.activeBrowser
+                    b.terminalFontSize = max(9, b.terminalFontSize - 1)
+                }
+                .keyboardShortcut("-", modifiers: .command)
+                .disabled(!appState.activeBrowser.showTerminal)
             }
         }
     }

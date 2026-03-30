@@ -180,6 +180,7 @@ struct TreeRow: View {
 
     @State private var isDragTargeted = false
     @State private var springLoadTask: Task<Void, Never>?
+    @State private var folderIcon: NSImage?
 
     private var node: TreeNode { flatNode.node }
 
@@ -191,6 +192,23 @@ struct TreeRow: View {
     private var showChevron: Bool {
         guard let children = node.children else { return true }
         return !children.isEmpty
+    }
+
+    @ViewBuilder
+    private var nodeIcon: some View {
+        if isDragTargeted {
+            Image(systemName: "folder.fill.badge.plus")
+                .foregroundStyle(Color.accentColor)
+                .font(.system(size: 13))
+        } else if node.kind == .folder, let icon = folderIcon {
+            Image(nsImage: icon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        } else {
+            Image(systemName: node.systemImage)
+                .foregroundStyle(node.iconColor)
+                .font(.system(size: 13))
+        }
     }
 
     var body: some View {
@@ -218,14 +236,22 @@ struct TreeRow: View {
 
             // Icon — tappable, same navigate action
             Button { navigateAction() } label: {
-                Image(systemName: isDragTargeted ? "folder.fill.badge.plus" : node.systemImage)
-                    .foregroundStyle(isDragTargeted ? Color.accentColor : node.iconColor)
-                    .font(.system(size: 13))
-                    .frame(width: 18, height: 26)
+                nodeIcon
+                    .frame(width: 18, height: 16)
+                    .frame(height: 26)
                     .contentShape(Rectangle())
                     .animation(.easeInOut(duration: 0.15), value: isDragTargeted)
             }
             .buttonStyle(.plain)
+            .task(id: node.url) {
+                guard node.kind == .folder else { return }
+                let path = node.url.path(percentEncoded: false)
+                folderIcon = await Task.detached(priority: .utility) {
+                    let img = NSWorkspace.shared.icon(forFile: path)
+                    img.size = NSSize(width: 32, height: 32)
+                    return img
+                }.value
+            }
 
             // Name — fills remaining width, tappable everywhere
             Button { navigateAction() } label: {
@@ -317,24 +343,23 @@ struct TreeRow: View {
     @discardableResult
     private func acceptDrop(_ providers: [NSItemProvider], into destination: URL) -> Bool {
         guard !providers.isEmpty else { return false }
-        let showHidden = appState.preferences.showHiddenFiles
+        var collected: [URL] = []
+        let group = DispatchGroup()
         for provider in providers {
+            group.enter()
             provider.loadObject(ofClass: NSURL.self) { reading, _ in
-                guard let source = reading as? URL else { return }
-                let destPath = destination.path(percentEncoded: false)
-                let srcPath  = source.path(percentEncoded: false)
-                guard source != destination,
-                      !destPath.hasPrefix(srcPath + "/") else { return }
-                let dest = destination.appendingPathComponent(source.lastPathComponent)
-                do {
-                    try FileManager.default.moveItem(at: source, to: dest)
-                } catch {
-                    try? FileManager.default.copyItem(at: source, to: dest)
-                }
-                DispatchQueue.main.async {
-                    Task { await appState.activeBrowser.load(showHidden: showHidden) }
-                }
+                if let source = reading as? URL { collected.append(source) }
+                group.leave()
             }
+        }
+        group.notify(queue: .main) {
+            guard !collected.isEmpty else { return }
+            let pairs = collected.map { src in
+                (from: src, to: destination.appendingPathComponent(src.lastPathComponent))
+            }
+            // Route through moveFiles so the operation is undo-registered (⌘Z reverses it).
+            appState.moveFiles(pairs, actionName: "Move",
+                               reloadBrowsers: [appState.primaryBrowser, appState.secondaryBrowser])
         }
         return true
     }

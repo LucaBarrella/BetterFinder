@@ -16,6 +16,7 @@ struct SwiftTermRepresentable: NSViewRepresentable {
         let view = DropTerminalView(frame: .zero)
         view.processDelegate = context.coordinator
         view.font = .monospacedSystemFont(ofSize: browser.terminalFontSize, weight: .regular)
+        applyBackground(to: view)
         context.coordinator.start(view: view, initialDirectory: browser.currentURL)
         return view
     }
@@ -24,6 +25,16 @@ struct SwiftTermRepresentable: NSViewRepresentable {
         let desired = NSFont.monospacedSystemFont(ofSize: browser.terminalFontSize, weight: .regular)
         if view.font.pointSize != desired.pointSize {
             view.font = desired
+        }
+        applyBackground(to: view)
+    }
+
+    private func applyBackground(to view: DropTerminalView) {
+        // Match the app's window background instead of the terminal-default black.
+        // Using the semantic NSColor ensures correct values for both light and dark mode.
+        let bg = NSColor.windowBackgroundColor
+        if view.nativeBackgroundColor != bg {
+            view.nativeBackgroundColor = bg
         }
     }
 }

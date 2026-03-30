@@ -4,20 +4,15 @@ import AppKit
 // MARK: - TerminalPanelView
 
 struct TerminalPanelView: View {
-    @Environment(AppState.self) private var appState
     let browser: BrowserState
 
     var body: some View {
         VStack(spacing: 0) {
-            // Resize handle + toolbar in one bar
             TerminalHeaderBar(browser: browser)
-
             Divider()
-
             SwiftTermRepresentable(browser: browser)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(height: browser.terminalHeight)
         .onChange(of: browser.currentURL) { _, newURL in
             if browser.terminalSyncEnabled {
                 browser.terminalChangeDirectory?(newURL)
@@ -26,240 +21,106 @@ struct TerminalPanelView: View {
     }
 }
 
-// MARK: - Header Bar (resize handle + toolbar in one NSView)
+// MARK: - Header
 
 private struct TerminalHeaderBar: View {
     let browser: BrowserState
 
     var body: some View {
-        // Access observable properties so SwiftUI re-renders (and calls updateNSView)
-        // whenever they change — this keeps the NSView header in sync.
-        let _ = browser.terminalCurrentURL
-        let _ = browser.terminalSyncEnabled
-        let _ = browser.selectedFileItems.count
-        return TerminalHeaderNSRep(browser: browser)
-            .frame(height: 30)
-    }
-}
+        HStack(spacing: 2) {
 
-// MARK: - AppKit-based header (drag to resize is much more reliable in AppKit)
+            // Shell name + terminal path
+            Text(browser.shellName)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .padding(.leading, 8)
 
-private struct TerminalHeaderNSRep: NSViewRepresentable {
-    let browser: BrowserState
+            if let url = browser.terminalCurrentURL {
+                Text(abbreviatedPath(url))
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
 
-    func makeNSView(context: Context) -> TerminalHeaderNSView {
-        TerminalHeaderNSView(browser: browser)
-    }
-    func updateNSView(_ v: TerminalHeaderNSView, context: Context) {
-        v.browser = browser
-        v.update()
-    }
-}
+            Spacer(minLength: 8)
 
-final class TerminalHeaderNSView: NSView {
-    var browser: BrowserState
-    private var dragStart: CGFloat = 0
-    private var heightAtDragStart: CGFloat = 0
+            // Sync toggle
+            HeaderButton(
+                icon: browser.terminalSyncEnabled
+                    ? "arrow.left.arrow.right.circle.fill"
+                    : "arrow.left.arrow.right.circle",
+                tooltip: "Toggle directory sync",
+                active: browser.terminalSyncEnabled
+            ) { browser.terminalSyncEnabled.toggle() }
 
-    // Toolbar subviews
-    private let shellLabel    = NSTextField(labelWithString: "")
-    private let pathLabel     = NSTextField(labelWithString: "")
-    private let syncButton    = NSButton()
-    private let goHereButton  = NSButton()
-    private let insertButton  = NSButton()
-    private let fontMinusBtn  = NSButton()
-    private let fontPlusBtn   = NSButton()
-    private let closeButton   = NSButton()
-    private let gripView      = NSView()
+            // cd terminal to current folder
+            HeaderButton(icon: "arrow.right.to.line",
+                         tooltip: "cd terminal to current folder") {
+                browser.terminalChangeDirectory?(browser.currentURL)
+            }
 
-    init(browser: BrowserState) {
-        self.browser = browser
-        super.init(frame: .zero)
-        setup()
-    }
-    required init?(coder: NSCoder) { fatalError() }
+            // Insert selected path
+            HeaderButton(
+                icon: "arrow.down.doc",
+                tooltip: "Insert selected path into terminal",
+                enabled: !browser.selectedFileItems.isEmpty
+            ) {
+                guard let item = browser.selectedFileItems.first else { return }
+                let path = "'" + item.url.path(percentEncoded: false)
+                    .replacingOccurrences(of: "'", with: "'\\''") + "'"
+                browser.terminalSendText?(path + " ")
+            }
 
-    func update() {
-        shellLabel.stringValue = browser.shellName
+            // Font size
+            HeaderButton(icon: "minus.magnifyingglass",
+                         tooltip: "Decrease font size (⌘-)") {
+                browser.terminalFontSize = max(9, browser.terminalFontSize - 1)
+            }
+            HeaderButton(icon: "plus.magnifyingglass",
+                         tooltip: "Increase font size (⌘+)") {
+                browser.terminalFontSize = min(24, browser.terminalFontSize + 1)
+            }
 
-        // Show abbreviated current terminal directory (or nothing if unknown)
-        if let termURL = browser.terminalCurrentURL {
-            pathLabel.stringValue = abbreviatedPath(termURL)
-            pathLabel.isHidden = false
-        } else {
-            pathLabel.isHidden = true
+            // Close
+            HeaderButton(icon: "xmark", tooltip: "Close terminal (F4)") {
+                browser.showTerminal = false
+            }
+            .padding(.trailing, 4)
         }
-
-        let syncImg = browser.terminalSyncEnabled
-            ? "arrow.left.arrow.right.circle.fill"
-            : "arrow.left.arrow.right.circle"
-        syncButton.image = NSImage(systemSymbolName: syncImg, accessibilityDescription: nil)
-        let hasSelection = !browser.selectedFileItems.isEmpty
-        insertButton.isEnabled = hasSelection
+        .frame(height: 30)
+        .background(Color(nsColor: .windowBackgroundColor))
     }
 
     private func abbreviatedPath(_ url: URL) -> String {
         let path = url.path(percentEncoded: false)
         let home = URL.homeDirectory.path(percentEncoded: false)
-        if path == home            { return "~" }
+        if path == home               { return "~" }
         if path.hasPrefix(home + "/") { return "~" + path.dropFirst(home.count) }
         return path
     }
+}
 
-    private func setup() {
-        wantsLayer = true
+// MARK: - Header button
 
-        // Background
-        layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+private struct HeaderButton: View {
+    let icon: String
+    let tooltip: String
+    var active: Bool  = false
+    var enabled: Bool = true
+    let action: () -> Void
 
-        // Resize grip (left edge)
-        gripView.wantsLayer = true
-        gripView.layer?.backgroundColor = NSColor.separatorColor.withAlphaComponent(0.6).cgColor
-        gripView.layer?.cornerRadius = 2
-        addSubview(gripView)
-
-        // Shell label
-        shellLabel.font = .systemFont(ofSize: 11, weight: .medium)
-        shellLabel.textColor = .secondaryLabelColor
-        shellLabel.stringValue = browser.shellName
-        addSubview(shellLabel)
-
-        // Terminal current-path label (right of shell name)
-        pathLabel.font = .systemFont(ofSize: 10, weight: .regular)
-        pathLabel.textColor = .tertiaryLabelColor
-        pathLabel.isHidden = true
-        addSubview(pathLabel)
-
-        // Sync button
-        configureButton(syncButton,
-            image: "arrow.left.arrow.right.circle.fill",
-            target: self, action: #selector(toggleSync))
-        syncButton.toolTip = "Toggle directory sync (GUI ↔ terminal)"
-
-        // "Go here" — sends the file panel's current directory to the terminal (one-shot)
-        configureButton(goHereButton,
-            image: "arrow.right.to.line",
-            target: self, action: #selector(goHere))
-        goHereButton.toolTip = "cd terminal to current folder"
-
-        // Insert path button
-        configureButton(insertButton,
-            image: "arrow.down.doc",
-            target: self, action: #selector(insertPath))
-        insertButton.toolTip = "Insert selected file path into terminal"
-
-        // Font size buttons
-        configureButton(fontMinusBtn,
-            image: "minus",
-            target: self, action: #selector(fontMinus))
-        configureButton(fontPlusBtn,
-            image: "plus",
-            target: self, action: #selector(fontPlus))
-
-        // Close button
-        configureButton(closeButton,
-            image: "xmark",
-            target: self, action: #selector(closeTerminal))
-        closeButton.toolTip = "Close terminal (F4)"
-
-        [syncButton, goHereButton, insertButton, fontMinusBtn, fontPlusBtn, closeButton].forEach { addSubview($0) }
-
-        // Cursor
-        addCursorRect(NSRect(origin: .zero, size: NSSize(width: 10_000, height: 30)),
-                      cursor: .resizeUpDown)
-
-        update()
-    }
-
-    private func configureButton(_ btn: NSButton, image: String, target: AnyObject, action: Selector) {
-        btn.image = NSImage(systemSymbolName: image, accessibilityDescription: nil)
-        btn.bezelStyle = .inline
-        btn.isBordered = false
-        btn.target = target
-        btn.action = action
-        btn.contentTintColor = .secondaryLabelColor
-    }
-
-    override func layout() {
-        super.layout()
-        let h = bounds.height
-        let w = bounds.width
-
-        // Grip: centered vertically, small pill shape
-        gripView.frame = NSRect(x: w/2 - 16, y: h/2 - 2, width: 32, height: 4)
-
-        // Right-aligned buttons
-        let btnW: CGFloat = 22
-        let pad: CGFloat  = 4
-        var x = w - btnW - pad
-        closeButton.frame    = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
-        fontPlusBtn.frame    = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
-        fontMinusBtn.frame   = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW + 4
-        insertButton.frame   = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
-        goHereButton.frame   = NSRect(x: x, y: 0, width: btnW, height: h); x -= btnW
-        syncButton.frame     = NSRect(x: x, y: 0, width: btnW, height: h)
-
-        // Left: shell name + terminal path
-        shellLabel.sizeToFit()
-        let labelH = shellLabel.frame.height
-        shellLabel.frame = NSRect(x: 10, y: (h - labelH) / 2,
-                                  width: shellLabel.frame.width, height: labelH)
-
-        pathLabel.sizeToFit()
-        let pathX = shellLabel.frame.maxX + 6
-        pathLabel.frame = NSRect(x: pathX, y: (h - pathLabel.frame.height) / 2,
-                                 width: min(pathLabel.frame.width, x - pathX - 4),
-                                 height: pathLabel.frame.height)
-    }
-
-    // MARK: - Drag to resize
-
-    override func mouseDown(with event: NSEvent) {
-        dragStart = convert(event.locationInWindow, from: nil).y
-        heightAtDragStart = browser.terminalHeight
-    }
-
-    override func mouseDragged(with event: NSEvent) {
-        let currentY = convert(event.locationInWindow, from: nil).y
-        let delta    = dragStart - currentY     // dragging up → increase height
-        browser.terminalHeight = max(80, min(600, heightAtDragStart + delta))
-    }
-
-    override func mouseUp(with event: NSEvent) {
-        dragStart = 0
-    }
-
-    override func resetCursorRects() {
-        addCursorRect(bounds, cursor: .resizeUpDown)
-    }
-
-    // MARK: - Actions
-
-    @objc private func toggleSync() {
-        browser.terminalSyncEnabled.toggle()
-        update()
-    }
-
-    @objc private func goHere() {
-        browser.terminalChangeDirectory?(browser.currentURL)
-    }
-
-    @objc private func insertPath() {
-        guard let item = browser.selectedFileItems.first else { return }
-        let path = "'" + item.url.path(percentEncoded: false)
-            .replacingOccurrences(of: "'", with: "'\\''") + "'"
-        browser.terminalSendText?(path + " ")
-    }
-
-    @objc private func fontMinus() {
-        browser.terminalFontSize = max(9, browser.terminalFontSize - 1)
-    }
-
-    @objc private func fontPlus() {
-        browser.terminalFontSize = min(24, browser.terminalFontSize + 1)
-    }
-
-    @objc private func closeTerminal() {
-        browser.showTerminal = false
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .frame(width: 22, height: 22)
+                .contentShape(Rectangle())
+                .foregroundStyle(active ? Color.accentColor : Color.secondary)
+                .opacity(enabled ? 1.0 : 0.35)
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
+        .help(tooltip)
     }
 }

@@ -55,8 +55,6 @@ struct FilePaneView: View {
                     searchingView
                 } else if let err = browser.error {
                     errorView(message: err)
-                } else if sortedItems.isEmpty {
-                    emptyView
                 } else {
                     FileTableView(
                         browser: browser,
@@ -64,6 +62,11 @@ struct FilePaneView: View {
                         appState: appState,
                         showLocationInKindColumn: isGlobalSearch
                     )
+                    .overlay {
+                        if sortedItems.isEmpty {
+                            emptyView.allowsHitTesting(false)
+                        }
+                    }
                 }
             }
             .animation(.easeInOut(duration: 0.15), value: browser.isSearching)

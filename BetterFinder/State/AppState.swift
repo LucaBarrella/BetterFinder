@@ -10,6 +10,10 @@ final class AppState {
 
     let fileSystemService: FileSystemService
     let preferences = AppPreferences()
+    let undoManager = UndoManager()
+    /// Tracked so SwiftUI menu items can observe canUndo / canRedo reactively.
+    private(set) var canUndo = false
+    private(set) var canRedo = false
 
     // MARK: - Browser Panes
 
@@ -61,19 +65,20 @@ final class AppState {
         alert.addButton(withTitle: "Cancel")
         guard alert.runModal() == .alertFirstButtonReturn else { return }
 
-        let destination  = dst.currentURL
-        let showHidden   = preferences.showHiddenFiles
-        DispatchQueue.global(qos: .userInitiated).async {
-            for item in sel {
-                let target = destination.appendingPathComponent(item.name)
-                do {
-                    if removing { try FileManager.default.moveItem(at: item.url, to: target) }
-                    else        { try FileManager.default.copyItem(at: item.url, to: target) }
-                } catch {}
-            }
-            DispatchQueue.main.async {
-                Task { await dst.load(showHidden: showHidden) }
-                if removing { Task { await src.load(showHidden: showHidden) } }
+        let destination = dst.currentURL
+        let showHidden  = preferences.showHiddenFiles
+
+        if removing {
+            let pairs = sel.map { (from: $0.url, to: destination.appendingPathComponent($0.name)) }
+            moveFiles(pairs, actionName: "Move", reloadBrowsers: [src, dst])
+        } else {
+            // Copy — no undo needed for non-destructive op, but still run on background thread
+            DispatchQueue.global(qos: .userInitiated).async {
+                for item in sel {
+                    let target = destination.appendingPathComponent(item.name)
+                    try? FileManager.default.copyItem(at: item.url, to: target)
+                }
+                DispatchQueue.main.async { Task { await dst.silentRefresh() } }
             }
         }
     }
@@ -95,16 +100,20 @@ final class AppState {
         guard !name.isEmpty else { return }
 
         let newURL = activeBrowser.currentURL.appendingPathComponent(name)
+        let browser = activeBrowser
         do {
             try Data().write(to: newURL, options: .withoutOverwriting)
+            undoManager.setActionName("New File")
+            undoManager.registerUndo(withTarget: self) { s in
+                s.trashFiles([newURL], reloadBrowser: browser)
+            }
         } catch {
             let err = NSAlert()
             err.messageText = "Could Not Create File"
             err.informativeText = error.localizedDescription
             err.runModal()
         }
-        let showHidden = preferences.showHiddenFiles
-        Task { await activeBrowser.load(showHidden: showHidden) }
+        Task { await browser.silentRefresh() }
     }
 
     func newFolderInActivePane() {
@@ -122,14 +131,18 @@ final class AppState {
         guard !name.isEmpty else { return }
 
         let newURL = activeBrowser.currentURL.appendingPathComponent(name)
+        let browser = activeBrowser
         do {
             try FileManager.default.createDirectory(at: newURL, withIntermediateDirectories: false)
+            undoManager.setActionName("New Folder")
+            undoManager.registerUndo(withTarget: self) { s in
+                s.trashFiles([newURL], reloadBrowser: browser)
+            }
         } catch {
             let err = NSAlert(); err.messageText = "Could Not Create Folder"
             err.informativeText = error.localizedDescription; err.runModal()
         }
-        let showHidden = preferences.showHiddenFiles
-        Task { await activeBrowser.load(showHidden: showHidden) }
+        Task { await browser.silentRefresh() }
     }
 
     func renameInActivePane() {
@@ -140,9 +153,74 @@ final class AppState {
     func trashInActivePane() {
         let sel = activeBrowser.selectedFileItems
         guard !sel.isEmpty else { return }
-        for item in sel { try? FileManager.default.trashItem(at: item.url, resultingItemURL: nil) }
-        let showHidden = preferences.showHiddenFiles
-        Task { await activeBrowser.load(showHidden: showHidden) }
+        trashFiles(sel.map(\.url), reloadBrowser: activeBrowser)
+    }
+
+    // MARK: - Undo helpers
+
+    /// Trashes `urls` and registers an undo action that restores them.
+    func trashFiles(_ urls: [URL], reloadBrowser browser: BrowserState) {
+        var pairs: [(original: URL, inTrash: URL)] = []
+        for url in urls {
+            var result: NSURL?
+            try? FileManager.default.trashItem(at: url, resultingItemURL: &result)
+            if let t = result as URL? { pairs.append((url, t)) }
+        }
+        if !pairs.isEmpty {
+            undoManager.setActionName("Move to Trash")
+            undoManager.registerUndo(withTarget: self) { s in
+                s.restoreFiles(pairs, reloadBrowser: browser)
+            }
+        }
+        Task { await browser.silentRefresh() }
+    }
+
+    /// Restores previously trashed files and registers an undo action that re-trashes them.
+    private func restoreFiles(_ pairs: [(original: URL, inTrash: URL)], reloadBrowser browser: BrowserState) {
+        let succeeded = pairs.filter {
+            (try? FileManager.default.moveItem(at: $0.inTrash, to: $0.original)) != nil
+        }
+        if !succeeded.isEmpty {
+            undoManager.setActionName("Move to Trash")
+            undoManager.registerUndo(withTarget: self) { s in
+                s.trashFiles(succeeded.map(\.original), reloadBrowser: browser)
+            }
+        }
+        Task { await browser.silentRefresh() }
+    }
+
+    /// Moves `pairs` of (from → to) and registers an inverse undo.
+    /// Passing the swapped pairs as undo automatically handles redo too.
+    func moveFiles(_ pairs: [(from: URL, to: URL)], actionName: String, reloadBrowsers: [BrowserState]) {
+        var succeeded: [(from: URL, to: URL)] = []
+        for (from, to) in pairs {
+            guard from != to,
+                  !to.path(percentEncoded: false).hasPrefix(from.path(percentEncoded: false) + "/")
+            else { continue }
+            if (try? FileManager.default.moveItem(at: from, to: to)) != nil {
+                succeeded.append((from, to))
+            }
+        }
+        if !succeeded.isEmpty {
+            undoManager.setActionName(actionName)
+            undoManager.registerUndo(withTarget: self) { s in
+                s.moveFiles(succeeded.map { ($0.to, $0.from) },
+                            actionName: actionName, reloadBrowsers: reloadBrowsers)
+            }
+        }
+        for b in reloadBrowsers { Task { await b.silentRefresh() } }
+    }
+
+    /// Registers an undo for a rename already performed by the caller.
+    func registerRenameUndo(from oldURL: URL, to newURL: URL, in browser: BrowserState) {
+        undoManager.setActionName("Rename")
+        undoManager.registerUndo(withTarget: self) { s in
+            do {
+                try FileManager.default.moveItem(at: newURL, to: oldURL)
+                s.registerRenameUndo(from: newURL, to: oldURL, in: browser)
+            } catch {}
+            Task { await browser.silentRefresh() }
+        }
     }
 
     /// Navigate the active pane to the other pane's current directory.
@@ -174,21 +252,11 @@ final class AppState {
     func pasteIntoActivePane() {
         guard !cutItems.isEmpty else { return }
         let destination = activeBrowser.currentURL
-        let itemsToMove = cutItems
-        cutItems = []
-        let showHidden = preferences.showHiddenFiles
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            for src in itemsToMove {
-                let dst = destination.appendingPathComponent(src.lastPathComponent)
-                guard src != dst,
-                      !dst.path(percentEncoded: false).hasPrefix(
-                          src.path(percentEncoded: false) + "/") else { continue }
-                try? FileManager.default.moveItem(at: src, to: dst)
-            }
-            DispatchQueue.main.async {
-                Task { await self?.activeBrowser.load(showHidden: showHidden) }
-            }
+        let pairs = cutItems.map { src in
+            (from: src, to: destination.appendingPathComponent(src.lastPathComponent))
         }
+        cutItems = []
+        moveFiles(pairs, actionName: "Move", reloadBrowsers: [activeBrowser])
     }
 
     var hasCutItems: Bool { !cutItems.isEmpty }
@@ -286,6 +354,21 @@ final class AppState {
             forName: NSWorkspace.didUnmountNotification,
             object: nil, queue: .main
         ) { [weak self] _ in self?.setupTreeRoots() }
+
+        // Keep canUndo / canRedo in sync so SwiftUI can observe them.
+        let updateUndo = { [weak self] (_: Notification) in
+            guard let self else { return }
+            self.canUndo = self.undoManager.canUndo
+            self.canRedo = self.undoManager.canRedo
+        }
+        for name: Notification.Name in [
+            .NSUndoManagerDidCloseUndoGroup,
+            .NSUndoManagerDidUndoChange,
+            .NSUndoManagerDidRedoChange
+        ] {
+            NotificationCenter.default.addObserver(
+                forName: name, object: undoManager, queue: .main, using: updateUndo)
+        }
     }
 
     // MARK: - Tree Roots
