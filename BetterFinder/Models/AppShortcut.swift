@@ -38,8 +38,39 @@ struct AppShortcut: Codable, Equatable, Hashable {
     static let copyToPane   = AppShortcut(keyCode: 96,  modifiers: 0)    // F5
     static let moveToPane   = AppShortcut(keyCode: 97,  modifiers: 0)    // F6
 
+    // Context-menu actions
+    static let quickLook    = AppShortcut(keyCode: 49,  modifiers: 0)              // Space
+    static let copy         = AppShortcut(keyCode: 8,   modifiers: mod(.command))  // ⌘C
+    static let copyPath     = AppShortcut(keyCode: 8,   modifiers: mod(.command, .shift))  // ⌘⇧C
+    static let getInfo      = AppShortcut(keyCode: 34,  modifiers: mod(.command))  // ⌘I
+    static let duplicate    = AppShortcut(keyCode: 2,   modifiers: mod(.command, .option)) // ⌘⌥D
+    static let makeAlias       = AppShortcut(keyCode: 37,  modifiers: mod(.command))  // ⌘L
+    static let globalActivate  = AppShortcut(keyCode: 11,  modifiers: mod(.command, .shift)) // ⌘⇧B
+
     private static func mod(_ flags: NSEvent.ModifierFlags...) -> UInt {
         flags.reduce(NSEvent.ModifierFlags()) { $0.union($1) }.rawValue
+    }
+
+    // MARK: - NSMenuItem helpers
+
+    /// Single-character string suitable for NSMenuItem.keyEquivalent.
+    /// Returns "" for keys that can't be represented (F-keys, arrows, etc.).
+    var menuKeyEquivalent: String {
+        switch keyCode {
+        case 49: return " "         // Space
+        case 36: return "\r"        // Return
+        case 48: return "\t"        // Tab
+        case 51: return "\u{08}"    // Delete / ⌫
+        case 53: return "\u{1B}"    // Escape
+        default:
+            let name = Self.keyName(for: keyCode)
+            // If keyName returned a multi-char string (e.g. "F5") it can't be a key equivalent
+            return name.count == 1 ? name.lowercased() : ""
+        }
+    }
+
+    var menuModifierMask: NSEvent.ModifierFlags {
+        NSEvent.ModifierFlags(rawValue: modifiers)
     }
 
     // MARK: - Key name table (no Carbon dependency)

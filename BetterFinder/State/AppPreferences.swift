@@ -81,6 +81,27 @@ final class AppPreferences {
     var shortcutMoveToPane: AppShortcut = .moveToPane {
         didSet { saveShortcut(shortcutMoveToPane, forKey: Keys.shortcutMoveToPane) }
     }
+    var shortcutQuickLook: AppShortcut = .quickLook {
+        didSet { saveShortcut(shortcutQuickLook, forKey: Keys.shortcutQuickLook) }
+    }
+    var shortcutCopy: AppShortcut = .copy {
+        didSet { saveShortcut(shortcutCopy, forKey: Keys.shortcutCopy) }
+    }
+    var shortcutCopyPath: AppShortcut = .copyPath {
+        didSet { saveShortcut(shortcutCopyPath, forKey: Keys.shortcutCopyPath) }
+    }
+    var shortcutGetInfo: AppShortcut = .getInfo {
+        didSet { saveShortcut(shortcutGetInfo, forKey: Keys.shortcutGetInfo) }
+    }
+    var shortcutDuplicate: AppShortcut = .duplicate {
+        didSet { saveShortcut(shortcutDuplicate, forKey: Keys.shortcutDuplicate) }
+    }
+    var shortcutMakeAlias: AppShortcut = .makeAlias {
+        didSet { saveShortcut(shortcutMakeAlias, forKey: Keys.shortcutMakeAlias) }
+    }
+    var shortcutGlobalActivate: AppShortcut = .globalActivate {
+        didSet { saveShortcut(shortcutGlobalActivate, forKey: Keys.shortcutGlobalActivate) }
+    }
 
     // MARK: - Init
 
@@ -110,6 +131,13 @@ final class AppPreferences {
         shortcutToggleDualPane = loadShortcut(forKey: Keys.shortcutToggleDualPane) ?? .toggleDualPane
         shortcutCopyToPane    = loadShortcut(forKey: Keys.shortcutCopyToPane)    ?? .copyToPane
         shortcutMoveToPane    = loadShortcut(forKey: Keys.shortcutMoveToPane)    ?? .moveToPane
+        shortcutQuickLook     = loadShortcut(forKey: Keys.shortcutQuickLook)     ?? .quickLook
+        shortcutCopy          = loadShortcut(forKey: Keys.shortcutCopy)          ?? .copy
+        shortcutCopyPath      = loadShortcut(forKey: Keys.shortcutCopyPath)      ?? .copyPath
+        shortcutGetInfo       = loadShortcut(forKey: Keys.shortcutGetInfo)       ?? .getInfo
+        shortcutDuplicate     = loadShortcut(forKey: Keys.shortcutDuplicate)     ?? .duplicate
+        shortcutMakeAlias        = loadShortcut(forKey: Keys.shortcutMakeAlias)        ?? .makeAlias
+        shortcutGlobalActivate   = loadShortcut(forKey: Keys.shortcutGlobalActivate)   ?? .globalActivate
     }
 
     // MARK: - Shortcut helpers
@@ -166,7 +194,14 @@ final class AppPreferences {
         static let shortcutToggleDualPane = "shortcutToggleDualPane"
         static let shortcutCopyToPane     = "shortcutCopyToPane"
         static let shortcutMoveToPane     = "shortcutMoveToPane"
-        static let showPreviewPanel       = "showPreviewPanel"
+        static let shortcutQuickLook      = "shortcutQuickLook"
+        static let shortcutCopy           = "shortcutCopy"
+        static let shortcutCopyPath       = "shortcutCopyPath"
+        static let shortcutGetInfo        = "shortcutGetInfo"
+        static let shortcutDuplicate      = "shortcutDuplicate"
+        static let shortcutMakeAlias       = "shortcutMakeAlias"
+        static let shortcutGlobalActivate  = "shortcutGlobalActivate"
+        static let showPreviewPanel        = "showPreviewPanel"
         static let maxRecentFolders       = "maxRecentFolders"
     }
 }

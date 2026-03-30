@@ -4,6 +4,7 @@ import SwiftUI
 struct BetterFinderApp: App {
     @State private var appState = AppState()
     @State private var serviceProvider = ServiceProvider()
+    @State private var hotkeyManager: GlobalHotkeyManager?
 
     var body: some Scene {
         WindowGroup {
@@ -16,6 +17,15 @@ struct BetterFinderApp: App {
                     NSApp.servicesProvider = serviceProvider
                     // Tell the system to re-scan for updated service registrations.
                     NSUpdateDynamicServices()
+
+                    // Register the global hot key (⌘⇧B by default).
+                    let mgr = GlobalHotkeyManager(appState: appState)
+                    mgr.register(shortcut: appState.preferences.shortcutGlobalActivate)
+                    hotkeyManager = mgr
+                }
+                // Re-register whenever the user changes the shortcut in Preferences.
+                .onChange(of: appState.preferences.shortcutGlobalActivate) { _, newShortcut in
+                    hotkeyManager?.register(shortcut: newShortcut)
                 }
         }
         .windowStyle(.titleBar)

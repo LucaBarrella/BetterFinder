@@ -15,7 +15,7 @@ struct PreferencesView: View {
                 .tabItem { Label("Shortcuts", systemImage: "keyboard") }
         }
         .environment(appState)
-        .frame(width: 480, height: 360)
+        .frame(width: 480, height: 520)
     }
 }
 
@@ -93,17 +93,28 @@ private struct ShortcutsPrefsTab: View {
         @Bindable var prefs = appState.preferences
         Form {
             Section("File Operations") {
-                shortcutRow("Rename",         shortcut: $prefs.shortcutRename,    default: .rename)
-                shortcutRow("New File",        shortcut: $prefs.shortcutNewFile,   default: .newFile)
-                shortcutRow("New Folder",      shortcut: $prefs.shortcutNewFolder, default: .newFolder)
-                shortcutRow("Move to Trash",   shortcut: $prefs.shortcutTrash,     default: .trash)
+                shortcutRow("Rename",             shortcut: $prefs.shortcutRename,    default: .rename)
+                shortcutRow("New File",           shortcut: $prefs.shortcutNewFile,   default: .newFile)
+                shortcutRow("New Folder",         shortcut: $prefs.shortcutNewFolder, default: .newFolder)
+                shortcutRow("Move to Trash",      shortcut: $prefs.shortcutTrash,     default: .trash)
                 shortcutRow("Copy to Other Pane", shortcut: $prefs.shortcutCopyToPane, default: .copyToPane)
                 shortcutRow("Move to Other Pane", shortcut: $prefs.shortcutMoveToPane, default: .moveToPane)
+            }
+            Section("Context Menu") {
+                shortcutRow("Quick Look",  shortcut: $prefs.shortcutQuickLook,  default: .quickLook)
+                shortcutRow("Copy",        shortcut: $prefs.shortcutCopy,       default: .copy)
+                shortcutRow("Copy Path",   shortcut: $prefs.shortcutCopyPath,   default: .copyPath)
+                shortcutRow("Get Info",    shortcut: $prefs.shortcutGetInfo,    default: .getInfo)
+                shortcutRow("Duplicate",   shortcut: $prefs.shortcutDuplicate,  default: .duplicate)
+                shortcutRow("Make Alias",  shortcut: $prefs.shortcutMakeAlias,  default: .makeAlias)
             }
             Section("View") {
                 shortcutRow("Toggle Hidden Files", shortcut: $prefs.shortcutToggleHidden,   default: .toggleHidden)
                 shortcutRow("Toggle Terminal",     shortcut: $prefs.shortcutToggleTerminal, default: .toggleTerminal)
                 shortcutRow("Toggle Dual Pane",    shortcut: $prefs.shortcutToggleDualPane, default: .toggleDualPane)
+            }
+            Section("Global Hotkey") {
+                shortcutRow("Bring BetterFinder to Front", shortcut: $prefs.shortcutGlobalActivate, default: .globalActivate)
             }
         }
         .formStyle(.grouped)

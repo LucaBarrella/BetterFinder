@@ -528,37 +528,50 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
 
         let menu = NSMenu()
         let n = selection.count
+        let prefs = appState.preferences
 
         if n == 1, let item = selection.first {
             // ── Open ──────────────────────────────────────────────────────────
-            menu.addItem(menuItem("Open", #selector(openSelected)))
+            menu.addItem(menuItem("Open", #selector(openSelected),
+                                  icon: "arrow.up.right.square"))
 
-            let openWithSub = buildOpenWithMenu(for: item.url)
             let openWithItem = NSMenuItem(title: "Open With", action: nil, keyEquivalent: "")
-            openWithItem.submenu = openWithSub
+            openWithItem.image = NSImage(systemSymbolName: "arrow.up.right.square.fill",
+                                         accessibilityDescription: nil)
+            openWithItem.submenu = buildOpenWithMenu(for: item.url)
             menu.addItem(openWithItem)
 
-            menu.addItem(menuItem("Show in Enclosing Folder", #selector(showInEnclosingFolder)))
+            menu.addItem(menuItem("Show in Enclosing Folder", #selector(showInEnclosingFolder),
+                                  icon: "arrow.up.backward"))
 
             // ── Destructive ───────────────────────────────────────────────────
             menu.addItem(.separator())
-            menu.addItem(menuItem("Move to Trash", #selector(trashSelected)))
+            menu.addItem(menuItem("Move to Trash", #selector(trashSelected),
+                                  icon: "trash", shortcut: prefs.shortcutTrash))
 
             // ── File operations ───────────────────────────────────────────────
             menu.addItem(.separator())
-            menu.addItem(menuItem("Get Info",                  #selector(getInfo)))
-            menu.addItem(menuItem("Rename",                    #selector(renameSelected)))
-            menu.addItem(menuItem("Compress \"\(item.name)\"", #selector(compress)))
-            menu.addItem(menuItem("Duplicate",                 #selector(duplicate)))
-            menu.addItem(menuItem("Make Alias",                #selector(makeAlias)))
-            menu.addItem(menuItem("Quick Look",                #selector(quickLook)))
+            menu.addItem(menuItem("Get Info", #selector(getInfo),
+                                  icon: "info.circle", shortcut: prefs.shortcutGetInfo))
+            menu.addItem(menuItem("Rename", #selector(renameSelected),
+                                  icon: "pencil", shortcut: prefs.shortcutRename))
+            menu.addItem(menuItem("Compress \"\(item.name)\"", #selector(compress),
+                                  icon: "archivebox"))
+            menu.addItem(menuItem("Duplicate", #selector(duplicate),
+                                  icon: "doc.on.doc", shortcut: prefs.shortcutDuplicate))
+            menu.addItem(menuItem("Make Alias", #selector(makeAlias),
+                                  icon: "link", shortcut: prefs.shortcutMakeAlias))
+            menu.addItem(menuItem("Quick Look", #selector(quickLook),
+                                  icon: "eye", shortcut: prefs.shortcutQuickLook))
 
             // ── Clipboard / share ─────────────────────────────────────────────
             menu.addItem(.separator())
-            menu.addItem(menuItem("Copy",      #selector(copyFiles)))
-            menu.addItem(menuItem("Copy Path", #selector(copyPath)))
-            menu.addItem(menuItem("Cut",       #selector(cutSelected)))
-            menu.addItem(menuItem("Share…",    #selector(shareFiles)))
+            menu.addItem(menuItem("Copy",      #selector(copyFiles),
+                                  icon: "doc.on.clipboard", shortcut: prefs.shortcutCopy))
+            menu.addItem(menuItem("Copy Path", #selector(copyPath),
+                                  icon: "list.clipboard", shortcut: prefs.shortcutCopyPath))
+            menu.addItem(menuItem("Cut",       #selector(cutSelected), icon: "scissors"))
+            menu.addItem(menuItem("Share…",    #selector(shareFiles), icon: "square.and.arrow.up"))
 
             // ── BetterFinder extras ───────────────────────────────────────────
             menu.addItem(.separator())
@@ -567,35 +580,44 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             if appState.isDualPane {
                 let label = (item.isDirectory && !item.isPackage)
                     ? "Open in Pane \(otherPane)" : "Reveal in Pane \(otherPane)"
-                menu.addItem(menuItem(label, #selector(openInOtherPane)))
+                menu.addItem(menuItem(label, #selector(openInOtherPane),
+                                      icon: "rectangle.split.2x1"))
             } else {
                 let label = (item.isDirectory && !item.isPackage)
                     ? "Open in New Pane" : "Reveal in New Pane"
-                menu.addItem(menuItem(label, #selector(openInOtherPane)))
+                menu.addItem(menuItem(label, #selector(openInOtherPane),
+                                      icon: "rectangle.split.2x1"))
             }
-            menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal)))
+            menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal), icon: "terminal"))
 
         } else {
             // ── Multi-selection ───────────────────────────────────────────────
-            menu.addItem(menuItem("Open \(n) Items",  #selector(openSelected)))
-            menu.addItem(menuItem("Quick Look",       #selector(quickLook)))
+            menu.addItem(menuItem("Open \(n) Items", #selector(openSelected),
+                                  icon: "arrow.up.right.square"))
+            menu.addItem(menuItem("Quick Look", #selector(quickLook),
+                                  icon: "eye", shortcut: prefs.shortcutQuickLook))
 
             menu.addItem(.separator())
-            menu.addItem(menuItem("Move \(n) Items to Trash", #selector(trashSelected)))
+            menu.addItem(menuItem("Move \(n) Items to Trash", #selector(trashSelected),
+                                  icon: "trash", shortcut: prefs.shortcutTrash))
 
             menu.addItem(.separator())
-            menu.addItem(menuItem("Get Info",           #selector(getInfo)))
-            menu.addItem(menuItem("Compress \(n) Items", #selector(compress)))
-            menu.addItem(menuItem("Duplicate",           #selector(duplicate)))
-            menu.addItem(menuItem("Make Alias",          #selector(makeAlias)))
+            menu.addItem(menuItem("Get Info", #selector(getInfo),
+                                  icon: "info.circle", shortcut: prefs.shortcutGetInfo))
+            menu.addItem(menuItem("Compress \(n) Items", #selector(compress), icon: "archivebox"))
+            menu.addItem(menuItem("Duplicate", #selector(duplicate),
+                                  icon: "doc.on.doc", shortcut: prefs.shortcutDuplicate))
+            menu.addItem(menuItem("Make Alias", #selector(makeAlias),
+                                  icon: "link", shortcut: prefs.shortcutMakeAlias))
 
             menu.addItem(.separator())
-            menu.addItem(menuItem("Copy \(n) Items",  #selector(copyFiles)))
-            menu.addItem(menuItem("Cut \(n) Items",   #selector(cutSelected)))
-            menu.addItem(menuItem("Share…",           #selector(shareFiles)))
+            menu.addItem(menuItem("Copy \(n) Items", #selector(copyFiles),
+                                  icon: "doc.on.clipboard", shortcut: prefs.shortcutCopy))
+            menu.addItem(menuItem("Cut \(n) Items",  #selector(cutSelected), icon: "scissors"))
+            menu.addItem(menuItem("Share…",          #selector(shareFiles),  icon: "square.and.arrow.up"))
 
             menu.addItem(.separator())
-            menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal)))
+            menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal), icon: "terminal"))
         }
         return menu
     }
@@ -635,16 +657,15 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
 
     private func emptySpaceMenu() -> NSMenu {
         let menu = NSMenu()
-        menu.addItem(menuItem("New File",   #selector(newFileAction)))
-        menu.addItem(menuItem("New Folder", #selector(newFolderAction)))
+        menu.addItem(menuItem("New File",   #selector(newFileAction),   icon: "doc.badge.plus"))
+        menu.addItem(menuItem("New Folder", #selector(newFolderAction), icon: "folder.badge.plus"))
         if appState.hasCutItems {
             menu.addItem(.separator())
-            let pasteItem = menuItem("Paste Item\(appState.cutItems.count == 1 ? "" : "s")",
-                                     #selector(pasteAction))
-            menu.addItem(pasteItem)
+            let label = "Paste Item\(appState.cutItems.count == 1 ? "" : "s")"
+            menu.addItem(menuItem(label, #selector(pasteAction), icon: "clipboard"))
         }
         menu.addItem(.separator())
-        menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal)))
+        menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal), icon: "terminal"))
         return menu
     }
 
@@ -674,8 +695,22 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         browser.terminalChangeDirectory?(targetURL)
     }
 
-    private func menuItem(_ title: String, _ action: Selector) -> NSMenuItem {
-        NSMenuItem(title: title, action: action, keyEquivalent: "").also { $0.target = self }
+    private func menuItem(
+        _ title: String,
+        _ action: Selector,
+        icon: String? = nil,
+        shortcut: AppShortcut? = nil
+    ) -> NSMenuItem {
+        let keyEq = shortcut?.menuKeyEquivalent ?? ""
+        return NSMenuItem(title: title, action: action, keyEquivalent: keyEq).also {
+            $0.target = self
+            if let shortcut {
+                $0.keyEquivalentModifierMask = shortcut.menuModifierMask
+            }
+            if let icon {
+                $0.image = NSImage(systemSymbolName: icon, accessibilityDescription: nil)
+            }
+        }
     }
 
     @objc private func openSelected() {
