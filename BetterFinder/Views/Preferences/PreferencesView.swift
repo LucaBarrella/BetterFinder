@@ -33,8 +33,16 @@ private struct GeneralPrefsTab: View {
                 Toggle("Show status bar",               isOn: $prefs.showStatusBar)
             }
             Section("Startup") {
-                Toggle("Start in dual-pane mode",       isOn: $prefs.startInDualPane)
+                Toggle("Start in dual-pane mode",        isOn: $prefs.startInDualPane)
                 Toggle("Open terminal panel by default", isOn: $prefs.openTerminalByDefault)
+                Toggle("Show preview panel by default",  isOn: $prefs.showPreviewPanel)
+            }
+            Section("Recents") {
+                Stepper(
+                    "Max recent folders: \(prefs.maxRecentFolders)",
+                    value: $prefs.maxRecentFolders,
+                    in: 3...30
+                )
             }
         }
         .formStyle(.grouped)

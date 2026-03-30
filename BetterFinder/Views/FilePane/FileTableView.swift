@@ -90,6 +90,7 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             col.width = w
             col.minWidth = minW
             col.resizingMask = .userResizingMask
+            col.sortDescriptorPrototype = NSSortDescriptor(key: id, ascending: true)
             tableView.addTableColumn(col)
         }
 
@@ -151,6 +152,13 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         // Update "Kind" column header to reflect current mode
         if let kindCol = tableView.tableColumns.first(where: { $0.identifier.rawValue == "kind" }) {
             kindCol.title = showLocationInKindColumn ? "Location" : "Kind"
+        }
+
+        // Sync sort indicator with browser state (e.g. on first load or external state change)
+        let desiredSD = NSSortDescriptor(key: browser.sortColumnID, ascending: browser.sortAscending)
+        if tableView.sortDescriptors.first?.key != desiredSD.key
+            || tableView.sortDescriptors.first?.ascending != desiredSD.ascending {
+            tableView.sortDescriptors = [desiredSD]
         }
 
         tableView.reloadData()
@@ -425,6 +433,21 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             return true
         }
 
+        // Cut  ⌘X
+        let cmd = event.modifierFlags.intersection(.deviceIndependentFlagsMask).contains(.command)
+        if event.keyCode == 7 && cmd && hasSelection {   // X key
+            activateThisPane()
+            appState.cutSelectedItems()
+            return true
+        }
+
+        // Paste  ⌘V
+        if event.keyCode == 9 && cmd && appState.hasCutItems {  // V key
+            activateThisPane()
+            appState.pasteIntoActivePane()
+            return true
+        }
+
         return false
     }
 
@@ -436,6 +459,14 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             $0 < items.count ? items[$0].id : nil
         })
         browser.selectedItems = ids
+    }
+
+    // MARK: - Sorting
+
+    func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
+        guard let sd = tableView.sortDescriptors.first, let key = sd.key else { return }
+        browser.sortColumnID = key
+        browser.sortAscending = sd.ascending
     }
 
     // MARK: - Double-click
@@ -487,12 +518,19 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
             }
 
             menu.addItem(.separator())
-            menu.addItem(menuItem("Rename", #selector(renameSelected)))
+            menu.addItem(menuItem("Cut",       #selector(cutSelected)))
+            menu.addItem(menuItem("Rename",    #selector(renameSelected)))
             menu.addItem(menuItem("Copy Path", #selector(copyPath)))
+            menu.addItem(.separator())
+            menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal)))
             menu.addItem(.separator())
             menu.addItem(menuItem("Move to Trash", #selector(trashSelected)))
         } else {
             menu.addItem(menuItem("Open \(selection.count) Items", #selector(openSelected)))
+            menu.addItem(.separator())
+            menu.addItem(menuItem("Cut \(selection.count) Items", #selector(cutSelected)))
+            menu.addItem(.separator())
+            menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal)))
             menu.addItem(.separator())
             menu.addItem(menuItem("Move \(selection.count) Items to Trash", #selector(trashSelected)))
         }
@@ -503,11 +541,42 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         let menu = NSMenu()
         menu.addItem(menuItem("New File",   #selector(newFileAction)))
         menu.addItem(menuItem("New Folder", #selector(newFolderAction)))
+        if appState.hasCutItems {
+            menu.addItem(.separator())
+            let pasteItem = menuItem("Paste Item\(appState.cutItems.count == 1 ? "" : "s")",
+                                     #selector(pasteAction))
+            menu.addItem(pasteItem)
+        }
+        menu.addItem(.separator())
+        menu.addItem(menuItem("Open in Terminal", #selector(openInTerminal)))
         return menu
     }
 
     @objc private func newFileAction()   { appState.newFileInActivePane() }
     @objc private func newFolderAction() { appState.newFolderInActivePane() }
+    @objc private func cutSelected()     { activateThisPane(); appState.cutSelectedItems() }
+    @objc private func pasteAction()     { activateThisPane(); appState.pasteIntoActivePane() }
+
+    @objc private func openInTerminal() {
+        // If a single file is selected, open the terminal in its parent folder.
+        // For folders or empty-space, open the terminal in the current browser folder.
+        let targetURL: URL
+        if let idx = tableView.selectedRowIndexes.first,
+           idx < items.count,
+           !items[idx].isDirectory {
+            targetURL = items[idx].url.deletingLastPathComponent()
+        } else if let idx = tableView.selectedRowIndexes.first,
+                  idx < items.count {
+            targetURL = items[idx].url
+        } else {
+            targetURL = browser.currentURL
+        }
+        activateThisPane()
+        // Navigate the terminal (and the pane) to the target folder
+        if browser.currentURL != targetURL { browser.navigate(to: targetURL) }
+        browser.showTerminal = true
+        browser.terminalChangeDirectory?(targetURL)
+    }
 
     private func menuItem(_ title: String, _ action: Selector) -> NSMenuItem {
         NSMenuItem(title: title, action: action, keyEquivalent: "").also { $0.target = self }

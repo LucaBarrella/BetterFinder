@@ -96,6 +96,11 @@ struct BetterFinderApp: App {
                 Button(appState.preferences.showStatusBar ? "Hide Status Bar" : "Show Status Bar") {
                     appState.preferences.showStatusBar.toggle()
                 }
+
+                Button(appState.preferences.showPreviewPanel ? "Hide Preview Panel" : "Show Preview Panel") {
+                    appState.preferences.showPreviewPanel.toggle()
+                }
+                .keyboardShortcut("p", modifiers: [.command, .option])
             }
         }
     }

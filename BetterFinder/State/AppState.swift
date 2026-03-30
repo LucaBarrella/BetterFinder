@@ -159,9 +159,81 @@ final class AppState {
         other.navigate(to: activeBrowser.currentURL)
     }
 
+    // MARK: - Cut / Paste clipboard
+
+    /// URLs currently staged for a cut-paste move. Cleared after paste or on copy.
+    private(set) var cutItems: [URL] = []
+
+    func cutSelectedItems() {
+        cutItems = activeBrowser.selectedFileItems.map(\.url)
+        // Also write paths to the system pasteboard so external apps can see them
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.writeObjects(cutItems as [NSURL])
+    }
+
+    func pasteIntoActivePane() {
+        guard !cutItems.isEmpty else { return }
+        let destination = activeBrowser.currentURL
+        let itemsToMove = cutItems
+        cutItems = []
+        let showHidden = preferences.showHiddenFiles
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            for src in itemsToMove {
+                let dst = destination.appendingPathComponent(src.lastPathComponent)
+                guard src != dst,
+                      !dst.path(percentEncoded: false).hasPrefix(
+                          src.path(percentEncoded: false) + "/") else { continue }
+                try? FileManager.default.moveItem(at: src, to: dst)
+            }
+            DispatchQueue.main.async {
+                Task { await self?.activeBrowser.load(showHidden: showHidden) }
+            }
+        }
+    }
+
+    var hasCutItems: Bool { !cutItems.isEmpty }
+
+    // MARK: - Recent Folders
+
+    var recentFolders: [URL] = []
+
+    func addToRecents(_ url: URL) {
+        // Skip root-level paths that are not useful in recents
+        guard url.pathComponents.count > 1 else { return }
+        var updated = recentFolders.filter { $0.standardizedFileURL != url.standardizedFileURL }
+        updated.insert(url, at: 0)
+        recentFolders = Array(updated.prefix(preferences.maxRecentFolders))
+        UserDefaults.standard.set(
+            recentFolders.map { $0.path(percentEncoded: false) },
+            forKey: "recentFolderPaths"
+        )
+    }
+
+    func removeFromRecents(_ url: URL) {
+        recentFolders.removeAll { $0.standardizedFileURL == url.standardizedFileURL }
+        UserDefaults.standard.set(
+            recentFolders.map { $0.path(percentEncoded: false) },
+            forKey: "recentFolderPaths"
+        )
+    }
+
+    func clearRecents() {
+        recentFolders = []
+        UserDefaults.standard.removeObject(forKey: "recentFolderPaths")
+    }
+
+    private func loadRecents() {
+        let paths = UserDefaults.standard.stringArray(forKey: "recentFolderPaths") ?? []
+        recentFolders = paths
+            .compactMap { URL(fileURLWithPath: $0) }
+            .filter { (try? $0.checkResourceIsReachable()) == true }
+            .prefix(preferences.maxRecentFolders)
+            .map { $0 }
+    }
+
     // MARK: - Tree
 
-    let treeController     = TreeController()
+    let treeController      = TreeController()
     let favoritesController = TreeController()
 
     // MARK: - Init
@@ -175,6 +247,11 @@ final class AppState {
 
         setupTreeRoots()
         setupFavorites()
+        loadRecents()
+
+        // Wire navigate callbacks for recents tracking
+        primaryBrowser.onNavigate   = { [weak self] url in self?.addToRecents(url) }
+        secondaryBrowser.onNavigate = { [weak self] url in self?.addToRecents(url) }
 
         // Apply startup preferences
         let prefs = preferences

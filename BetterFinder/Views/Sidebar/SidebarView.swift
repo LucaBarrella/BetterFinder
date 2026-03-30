@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 
 struct SidebarView: View {
     @Environment(AppState.self) private var appState
+    @State private var recentsExpanded = false
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -17,6 +18,22 @@ struct SidebarView: View {
                             .id(flat.id)
                     }
 
+                    // ── Recents ──────────────────────────────────────────
+                    if !appState.recentFolders.isEmpty {
+                        CollapsibleSectionHeader(
+                            title: "Recents",
+                            isExpanded: $recentsExpanded
+                        )
+                        .padding(.top, 6)
+
+                        if recentsExpanded {
+                            ForEach(appState.recentFolders, id: \.absoluteString) { url in
+                                RecentRow(url: url)
+                            }
+                        }
+                    }
+
+                    // ── Locations ─────────────────────────────────────────
                     SectionHeader(title: "Locations")
                         .padding(.top, 6)
                     ForEach(appState.treeController.flatNodes) { flat in
@@ -64,6 +81,93 @@ private struct SectionHeader: View {
             .padding(.horizontal, 16)
             .padding(.top, 10)
             .padding(.bottom, 2)
+    }
+}
+
+// MARK: - Collapsible Section Header (for Recents)
+
+private struct CollapsibleSectionHeader: View {
+    let title: String
+    @Binding var isExpanded: Bool
+
+    var body: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.18)) { isExpanded.toggle() }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                    .font(.system(size: 8, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+                    .frame(width: 10)
+                Text(title.uppercased())
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 10)
+            .padding(.bottom, 2)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Recent Row
+
+private struct RecentRow: View {
+    @Environment(AppState.self) private var appState
+    let url: URL
+
+    private var name: String { url.lastPathComponent.isEmpty ? "/" : url.lastPathComponent }
+    private var isActive: Bool {
+        appState.activeBrowser.currentURL.standardizedFileURL == url.standardizedFileURL
+    }
+
+    var body: some View {
+        Button { appState.activeBrowser.navigate(to: url) } label: {
+            HStack(spacing: 6) {
+                Color.clear.frame(width: 20)           // indent to align with tree rows
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 16)
+                Text(name)
+                    .font(.system(size: 13))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .foregroundStyle(isActive ? Color.accentColor : Color.primary)
+                Spacer(minLength: 0)
+            }
+            .frame(height: 26)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(isActive ? Color.accentColor.opacity(0.10) : Color.clear)
+        .contextMenu {
+            Button("Open in Pane 1") {
+                appState.primaryBrowser.navigate(to: url)
+                appState.activePaneIsSecondary = false
+            }
+            Button("Open in Pane 2") {
+                appState.secondaryBrowser.navigate(to: url)
+                appState.isDualPane = true
+                appState.activePaneIsSecondary = true
+            }
+            Divider()
+            Button("Copy Path") {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(url.path(percentEncoded: false), forType: .string)
+            }
+            Button("Open in Terminal") {
+                appState.activeBrowser.navigate(to: url)
+                appState.activeBrowser.showTerminal = true
+                appState.activeBrowser.terminalChangeDirectory?(url)
+            }
+            Divider()
+            Button("Remove from Recents") { appState.removeFromRecents(url) }
+            Button("Clear All Recents")   { appState.clearRecents() }
+        }
     }
 }
 

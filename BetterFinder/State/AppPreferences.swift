@@ -27,6 +27,12 @@ final class AppPreferences {
     var openTerminalByDefault: Bool = false {
         didSet { ud.set(openTerminalByDefault, forKey: Keys.openTerminalByDefault) }
     }
+    var showPreviewPanel: Bool = false {
+        didSet { ud.set(showPreviewPanel, forKey: Keys.showPreviewPanel) }
+    }
+    var maxRecentFolders: Int = 10 {
+        didSet { ud.set(maxRecentFolders, forKey: Keys.maxRecentFolders) }
+    }
 
     // MARK: - Search defaults
 
@@ -87,6 +93,8 @@ final class AppPreferences {
         showStatusBar     = ud.object(forKey: Keys.showStatusBar) as? Bool ?? true
         startInDualPane        = ud.bool(forKey: Keys.startInDualPane)
         openTerminalByDefault  = ud.bool(forKey: Keys.openTerminalByDefault)
+        showPreviewPanel       = ud.bool(forKey: Keys.showPreviewPanel)
+        maxRecentFolders       = ud.object(forKey: Keys.maxRecentFolders) as? Int ?? 10
         defaultSearchScope     = SearchOptions.SearchScope(rawValue:
                                      ud.string(forKey: Keys.defaultSearchScope) ?? "") ?? .currentFolder
         defaultSearchMatchMode = SearchOptions.MatchMode(rawValue:
@@ -158,5 +166,7 @@ final class AppPreferences {
         static let shortcutToggleDualPane = "shortcutToggleDualPane"
         static let shortcutCopyToPane     = "shortcutCopyToPane"
         static let shortcutMoveToPane     = "shortcutMoveToPane"
+        static let showPreviewPanel       = "showPreviewPanel"
+        static let maxRecentFolders       = "maxRecentFolders"
     }
 }

@@ -72,6 +72,20 @@ struct BrowserToolbar: ToolbarContent {
                     .symbolRenderingMode(.hierarchical)
             }
             .help(appState.activeBrowser.showTerminal ? "Hide Terminal (F4)" : "Show Terminal (F4)")
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.18)) {
+                    appState.preferences.showPreviewPanel.toggle()
+                }
+            } label: {
+                Image(systemName: appState.preferences.showPreviewPanel
+                      ? "sidebar.right"
+                      : "sidebar.right")
+                    .symbolRenderingMode(.hierarchical)
+                    .opacity(appState.preferences.showPreviewPanel ? 1.0 : 0.5)
+            }
+            .help(appState.preferences.showPreviewPanel ? "Hide Preview Panel" : "Show Preview Panel")
+            .keyboardShortcut("p", modifiers: [.command, .option])
         }
     }
 }

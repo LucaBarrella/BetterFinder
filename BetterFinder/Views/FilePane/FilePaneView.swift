@@ -10,12 +10,33 @@ struct FilePaneView: View {
     }
 
     private var sortedItems: [FileItem] {
-        let items = browser.filteredItems
-        let folders = items.filter(\.isDirectory)
-            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-        let files = items.filter { !$0.isDirectory }
-            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-        return folders + files
+        let items     = browser.filteredItems
+        let ascending = browser.sortAscending
+        let col       = browser.sortColumnID
+
+        func before(_ a: FileItem, _ b: FileItem) -> Bool {
+            switch col {
+            case "date":
+                let cmp = a.sortableDate.compare(b.sortableDate)
+                return ascending ? cmp == .orderedAscending : cmp == .orderedDescending
+            case "size":
+                return ascending ? a.sortableSize < b.sortableSize : a.sortableSize > b.sortableSize
+            case "kind":
+                let cmp = a.kindDescription.localizedStandardCompare(b.kindDescription)
+                return ascending ? cmp == .orderedAscending : cmp == .orderedDescending
+            default:   // "name"
+                let cmp = a.name.localizedStandardCompare(b.name)
+                return ascending ? cmp == .orderedAscending : cmp == .orderedDescending
+            }
+        }
+
+        if browser.foldersFirst {
+            let folders = items.filter(\.isDirectory).sorted(by: before)
+            let files   = items.filter { !$0.isDirectory }.sorted(by: before)
+            return folders + files
+        } else {
+            return items.sorted(by: before)
+        }
     }
 
     var body: some View {

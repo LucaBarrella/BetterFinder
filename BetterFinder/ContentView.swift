@@ -22,8 +22,26 @@ struct ContentView: View {
 
     // MARK: - Detail Area
 
+    private var previewURL: URL? {
+        appState.activeBrowser.selectedFileItems.first?.url
+    }
+
     @ViewBuilder
     private var detailContent: some View {
+        if appState.preferences.showPreviewPanel {
+            HSplitView {
+                panesArea
+                    .frame(minWidth: 380)
+                PreviewPanelView(url: previewURL)
+                    .frame(minWidth: 260, idealWidth: 320, maxWidth: 540)
+            }
+        } else {
+            panesArea
+        }
+    }
+
+    @ViewBuilder
+    private var panesArea: some View {
         if appState.isDualPane {
             dualPaneLayout
         } else {

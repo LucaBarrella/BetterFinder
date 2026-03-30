@@ -17,6 +17,11 @@ final class BrowserState {
     var isSearching = false
     var error: String?
 
+    // MARK: - Sort
+    var sortColumnID: String = "name"   // matches NSTableColumn identifier
+    var sortAscending: Bool  = true
+    var foldersFirst: Bool   = true
+
     private var searchTask: Task<Void, Never>?
 
     // MARK: - Terminal
@@ -33,6 +38,9 @@ final class BrowserState {
 
     /// Set by FileTableView.Coordinator. Triggers inline rename on the currently selected row.
     var triggerInlineRename: (() -> Void)?
+
+    /// Called by AppState to track recent folders whenever the user navigates.
+    var onNavigate: ((URL) -> Void)?
 
     // MARK: - Private
 
@@ -142,6 +150,7 @@ final class BrowserState {
         // Clear search when navigating to a new location
         clearSearch()
         Task { await load(showHidden: showHiddenCache) }
+        onNavigate?(url)
     }
 
     func goBack() {
