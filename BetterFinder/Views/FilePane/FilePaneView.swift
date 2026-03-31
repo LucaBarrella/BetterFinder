@@ -30,7 +30,7 @@ struct FilePaneView: View {
             }
         }
 
-        if browser.foldersFirst {
+        if appState.preferences.foldersFirst {
             let folders = items.filter(\.isDirectory).sorted(by: before)
             let files   = items.filter { !$0.isDirectory }.sorted(by: before)
             return folders + files

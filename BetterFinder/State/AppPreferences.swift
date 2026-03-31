@@ -9,6 +9,9 @@ final class AppPreferences {
     var showHiddenFiles: Bool = false {
         didSet { ud.set(showHiddenFiles, forKey: Keys.showHiddenFiles) }
     }
+    var foldersFirst: Bool = false {
+        didSet { ud.set(foldersFirst, forKey: Keys.foldersFirst) }
+    }
     var viewMode: ViewMode = .list {
         didSet { ud.set(viewMode.rawValue, forKey: Keys.viewMode) }
     }
@@ -112,6 +115,7 @@ final class AppPreferences {
 
     init() {
         showHiddenFiles   = ud.bool(forKey: Keys.showHiddenFiles)
+        foldersFirst      = ud.object(forKey: Keys.foldersFirst) as? Bool ?? false
         viewMode          = ViewMode(rawValue: ud.string(forKey: Keys.viewMode) ?? "") ?? .list
         showPathBar       = ud.object(forKey: Keys.showPathBar)   as? Bool ?? true
         showStatusBar     = ud.object(forKey: Keys.showStatusBar) as? Bool ?? true
@@ -181,6 +185,7 @@ final class AppPreferences {
 
     private enum Keys {
         static let showHiddenFiles       = "showHiddenFiles"
+        static let foldersFirst          = "foldersFirst"
         static let viewMode              = "viewMode"
         static let showPathBar           = "showPathBar"
         static let showStatusBar         = "showStatusBar"

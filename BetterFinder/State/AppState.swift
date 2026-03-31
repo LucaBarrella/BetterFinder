@@ -261,6 +261,53 @@ final class AppState {
 
     var hasCutItems: Bool { !cutItems.isEmpty }
 
+    // MARK: - Drop Stack
+
+    var dropStackItems: [URL] = []
+    var showDropStack: Bool = false
+    var showTrashZone: Bool = false
+
+    func addToDropStack(_ urls: [URL]) {
+        for url in urls where !dropStackItems.contains(url) {
+            dropStackItems.append(url)
+        }
+    }
+
+    func removeFromDropStack(_ url: URL) {
+        dropStackItems.removeAll { $0 == url }
+    }
+
+    func clearDropStack() {
+        dropStackItems.removeAll()
+    }
+
+    func moveDropStackToActivePane() {
+        guard !dropStackItems.isEmpty else { return }
+        let destination = activeBrowser.currentURL
+        let pairs = dropStackItems.map { src in
+            (from: src, to: destination.appendingPathComponent(src.lastPathComponent))
+        }
+        clearDropStack()
+        moveFiles(pairs, actionName: "Move from Stack",
+                  reloadBrowsers: [primaryBrowser, secondaryBrowser])
+    }
+
+    func copyDropStackToActivePane() {
+        guard !dropStackItems.isEmpty else { return }
+        let destination = activeBrowser.currentURL
+        let urls = dropStackItems
+        DispatchQueue.global(qos: .userInitiated).async {
+            for url in urls {
+                let target = destination.appendingPathComponent(url.lastPathComponent)
+                try? FileManager.default.copyItem(at: url, to: target)
+            }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                Task { await self.activeBrowser.silentRefresh() }
+            }
+        }
+    }
+
     // MARK: - Recent Folders
 
     var recentFolders: [URL] = []
@@ -337,12 +384,6 @@ final class AppState {
         let showHidden = prefs.showHiddenFiles
         Task {
             await primaryBrowser.load(showHidden: showHidden)
-            // Pre-expand sidebar to home directory
-            await treeController.expandPath(
-                to: home,
-                service: svc,
-                showHidden: showHidden
-            )
         }
 
         NotificationCenter.default.addObserver(
@@ -376,17 +417,46 @@ final class AppState {
     private func setupTreeRoots() {
         var roots: [TreeNode] = []
 
-        // 1. Macintosh HD (root)
+        // 1. Macintosh HD (root filesystem)
         roots.append(TreeNode(url: URL(fileURLWithPath: "/"), kind: .root))
 
-        // 2. iCloud Drive — try well-known CloudDocs path
-        let icloudCandidate = URL.homeDirectory
-            .appending(components: "Library", "Mobile Documents", "com~apple~CloudDocs")
-        if (try? icloudCandidate.checkResourceIsReachable()) == true {
-            roots.append(TreeNode(url: icloudCandidate, kind: .icloud))
+        // 2. Cloud storage providers — enumerate ~/Library/CloudStorage (Ventura+)
+        //    This covers iCloud Drive, Nextcloud, OneDrive, Dropbox, etc. automatically.
+        let cloudStorageDir = URL.homeDirectory
+            .appending(components: "Library", "CloudStorage")
+        var foundICloudViaCloudStorage = false
+
+        if let entries = try? FileManager.default.contentsOfDirectory(
+            at: cloudStorageDir,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ) {
+            // Sort alphabetically for a stable order
+            for entry in entries.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+                let isDir = (try? entry.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                guard isDir else { continue }
+                if entry.lastPathComponent.lowercased().hasPrefix("icloud") {
+                    roots.append(TreeNode(url: entry, kind: .icloud))
+                    foundICloudViaCloudStorage = true
+                } else {
+                    roots.append(TreeNode(url: entry, kind: .cloudProvider))
+                }
+            }
         }
 
-        // 3. Mounted volumes: local external drives first, then network shares
+        // Fallback: legacy iCloud path (pre-Ventura or if CloudStorage doesn't exist)
+        if !foundICloudViaCloudStorage {
+            let icloudLegacy = URL.homeDirectory
+                .appending(components: "Library", "Mobile Documents", "com~apple~CloudDocs")
+            if (try? icloudLegacy.checkResourceIsReachable()) == true {
+                roots.append(TreeNode(url: icloudLegacy, kind: .icloud))
+            }
+        }
+
+        // 3. Home directory
+        roots.append(TreeNode(url: URL.homeDirectory, kind: .folder))
+
+        // 5. Mounted volumes — local external drives first, then network shares
         let vols = FileManager.default.mountedVolumeURLs(
             includingResourceValuesForKeys: [.volumeNameKey, .volumeIsLocalKey],
             options: .skipHiddenVolumes
@@ -403,6 +473,10 @@ final class AppState {
         }
         roots.append(contentsOf: networkRoots)
 
+        // 6. Trash
+        let trashURL = URL.homeDirectory.appending(component: ".Trash")
+        roots.append(TreeNode(url: trashURL, kind: .trash))
+
         treeController.setRoots(roots)
     }
 
@@ -411,7 +485,7 @@ final class AppState {
     private func setupFavorites() {
         let home = URL.homeDirectory
         let favURLs: [(URL, TreeNode.Kind)] = [
-            (home,                                        .folder),
+            (URL(fileURLWithPath: "/Applications"),       .folder),
             (home.appending(component: "Desktop"),        .folder),
             (home.appending(component: "Documents"),      .folder),
             (home.appending(component: "Downloads"),      .folder),

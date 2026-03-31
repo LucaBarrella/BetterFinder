@@ -31,6 +31,7 @@ private struct GeneralPrefsTab: View {
                 Toggle("Show hidden files (dot files)", isOn: $prefs.showHiddenFiles)
                 Toggle("Show path bar",                 isOn: $prefs.showPathBar)
                 Toggle("Show status bar",               isOn: $prefs.showStatusBar)
+                Toggle("Show folders before files",     isOn: $prefs.foldersFirst)
             }
             Section("Startup") {
                 Toggle("Start in dual-pane mode",        isOn: $prefs.startInDualPane)

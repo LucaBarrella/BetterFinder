@@ -23,7 +23,6 @@ final class BrowserState {
     // MARK: - Sort
     var sortColumnID: String = "name"   // matches NSTableColumn identifier
     var sortAscending: Bool  = true
-    var foldersFirst: Bool   = true
 
     private var searchTask: Task<Void, Never>?
 

@@ -86,6 +86,7 @@ struct BrowserToolbar: ToolbarContent {
             }
             .help(appState.preferences.showPreviewPanel ? "Hide Preview Panel" : "Show Preview Panel")
             .keyboardShortcut("p", modifiers: [.command, .option])
+
         }
     }
 }

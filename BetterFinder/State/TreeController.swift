@@ -67,6 +67,47 @@ final class TreeController {
         rebuild()
     }
 
+    // MARK: - Collapse irrelevant
+
+    /// Collapses every expanded node that is NOT an ancestor of (or equal to) `url`.
+    /// Called after navigation so only the current path stays open in the sidebar.
+    func collapseIrrelevantNodes(keeping url: URL) {
+        for root in roots {
+            collapseIrrelevant(root, targetURL: url)
+        }
+        rebuild()
+    }
+
+    private func collapseIrrelevant(_ node: TreeNode, targetURL: URL) {
+        let me  = node.url.path(percentEncoded: false)
+        let tgt = targetURL.path(percentEncoded: false)
+        let isOnPath = tgt.hasPrefix(me == "/" ? me : me + "/") || tgt == me
+
+        if isOnPath {
+            // Stay open; recurse so deeper off-path children get collapsed
+            for child in node.children ?? [] {
+                collapseIrrelevant(child, targetURL: targetURL)
+            }
+        } else {
+            node.isExpanded = false
+            // No need to recurse — collapsing the parent hides children
+        }
+    }
+
+    // MARK: - Invalidate
+
+    /// Collapses and clears all cached children so the tree reloads on next expand.
+    func invalidateAll() {
+        for root in roots { collapseAndInvalidate(root) }
+        rebuild()
+    }
+
+    private func collapseAndInvalidate(_ node: TreeNode) {
+        for child in node.children ?? [] { collapseAndInvalidate(child) }
+        node.children = nil
+        node.isExpanded = false
+    }
+
     // MARK: - Rebuild
 
     /// Rebuilds `flatNodes` from the current tree state.
@@ -107,17 +148,26 @@ final class TreeController {
     }
 
     private func expand(node: TreeNode, toURL target: URL, service: FileSystemService, showHidden: Bool) async {
+        // Only auto-expand through the filesystem root ("/", Macintosh HD).
+        // Other top-level nodes (Home, iCloud, volumes…) must stay collapsed during
+        // navigation — expanding them causes unrelated sidebar sections to open.
+        if roots.contains(where: { $0 === node }) && node.kind != .root {
+            return
+        }
+
         let me  = node.url.path(percentEncoded: false)
         let tgt = target.path(percentEncoded: false)
 
-        // This node must be a strict ancestor of target (or target itself)
-        guard tgt.hasPrefix(me == "/" ? me : me + "/") || tgt == me else { return }
+        // This node must be a strict ancestor of the target (not the target itself).
+        // Expanding the target itself is left to the caller (expandNode); here we only
+        // expand ancestors so the target becomes visible as a child of its parent.
+        guard tgt.hasPrefix(me == "/" ? me : me + "/") else { return }
 
         if node.children == nil {
             await node.loadChildrenIfNeeded(service: service, showHidden: showHidden)
         }
         node.isExpanded = true
-        rebuild()   // update UI incrementally as each level expands
+        rebuild()
 
         for child in (node.children ?? []) {
             await expand(node: child, toURL: target, service: service, showHidden: showHidden)

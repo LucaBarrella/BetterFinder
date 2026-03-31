@@ -12,6 +12,8 @@ struct SidebarView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
 
+                    SidebarDropStackSection()
+
                     SectionHeader(title: "Favorites")
                     ForEach(appState.favoritesController.flatNodes) { flat in
                         TreeRow(flatNode: flat, controller: appState.favoritesController)
@@ -45,14 +47,28 @@ struct SidebarView: View {
             }
             .frame(minWidth: 200, idealWidth: 230)
             .background(Color(nsColor: .controlBackgroundColor))
+            .onChange(of: appState.preferences.showHiddenFiles) { _, _ in
+                appState.treeController.invalidateAll()
+                appState.favoritesController.invalidateAll()
+            }
             .onChange(of: appState.activeBrowser.currentURL) { _, newURL in
                 Task {
-                    await appState.treeController.expandPath(
-                        to: newURL, service: appState.fileSystemService,
-                        showHidden: appState.preferences.showHiddenFiles)
-                    await appState.treeController.expandNode(
-                        matching: newURL, service: appState.fileSystemService,
-                        showHidden: appState.preferences.showHiddenFiles)
+                    // Only expand the Locations tree when the URL is a real file path
+                    // that is NOT already a visible root in either section.
+                    // expandNode is intentionally omitted — we only want to make the target
+                    // visible (by expanding its ancestors), not auto-open the target itself.
+                    guard newURL.isFileURL else { return }
+                    let isAnyRoot = appState.favoritesController.flatNodes
+                        .contains { $0.depth == 0 && $0.node.url.standardizedFileURL == newURL.standardizedFileURL }
+                        || appState.treeController.flatNodes
+                        .contains { $0.depth == 0 && $0.node.url.standardizedFileURL == newURL.standardizedFileURL }
+                    if !isAnyRoot {
+                        await appState.treeController.expandPath(
+                            to: newURL, service: appState.fileSystemService,
+                            showHidden: appState.preferences.showHiddenFiles)
+                    }
+                    // Collapse branches that are no longer on the current path
+                    appState.treeController.collapseIrrelevantNodes(keeping: newURL)
                     await appState.favoritesController.expandNode(
                         matching: newURL, service: appState.fileSystemService,
                         showHidden: appState.preferences.showHiddenFiles)
@@ -74,13 +90,18 @@ struct SidebarView: View {
 private struct SectionHeader: View {
     let title: String
     var body: some View {
-        Text(title.uppercased())
-            .font(.system(size: 10, weight: .semibold))
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
-            .padding(.top, 10)
-            .padding(.bottom, 2)
+        // 10 (leading) + 10 (chevron placeholder) + 4 (spacing) = 24 → aligns text
+        // with CollapsibleSectionHeader and SidebarDropStackSection
+        HStack(spacing: 4) {
+            Color.clear.frame(width: 10)   // placeholder for chevron width
+            Text(title.uppercased())
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.secondary)
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .padding(.bottom, 2)
     }
 }
 
@@ -185,11 +206,14 @@ struct TreeRow: View {
     private var node: TreeNode { flatNode.node }
 
     private var isActive: Bool {
-        appState.activeBrowser.currentURL.standardizedFileURL
+        guard node.kind != .airdrop else { return false }
+        return appState.activeBrowser.currentURL.standardizedFileURL
             == node.url.standardizedFileURL
     }
 
     private var showChevron: Bool {
+        // AirDrop is not expandable
+        if node.kind == .airdrop { return false }
         guard let children = node.children else { return true }
         return !children.isEmpty
     }
@@ -200,11 +224,13 @@ struct TreeRow: View {
             Image(systemName: "folder.fill.badge.plus")
                 .foregroundStyle(Color.accentColor)
                 .font(.system(size: 13))
-        } else if node.kind == .folder, let icon = folderIcon {
+        } else if !node.usesSFSymbol, let icon = folderIcon {
+            // Generic subfolder: native blue macOS folder icon
             Image(nsImage: icon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         } else {
+            // Special path or Locations item: matching SF Symbol (outlined, monochrome)
             Image(systemName: node.systemImage)
                 .foregroundStyle(node.iconColor)
                 .font(.system(size: 13))
@@ -244,7 +270,7 @@ struct TreeRow: View {
             }
             .buttonStyle(.plain)
             .task(id: node.url) {
-                guard node.kind == .folder else { return }
+                guard !node.usesSFSymbol else { folderIcon = nil; return }
                 let path = node.url.path(percentEncoded: false)
                 folderIcon = await Task.detached(priority: .utility) {
                     let img = NSWorkspace.shared.icon(forFile: path)
@@ -252,6 +278,9 @@ struct TreeRow: View {
                     return img
                 }.value
             }
+
+            // Gap between icon and name (matches Finder's sidebar spacing)
+            Color.clear.frame(width: 6)
 
             // Name — fills remaining width, tappable everywhere
             Button { navigateAction() } label: {
@@ -271,7 +300,7 @@ struct TreeRow: View {
             }
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity)
-            .padding(.trailing, 8)
+            .padding(.trailing, 16)
         }
         .frame(height: 26)
         .background(
@@ -324,6 +353,8 @@ struct TreeRow: View {
                 isDragTargeted = targeted
                 if targeted {
                     springLoadTask?.cancel()
+                    // AirDrop and Trash don't spring-load (AirDrop not expandable, Trash is a leaf)
+                    guard node.kind != .airdrop else { return }
                     springLoadTask = Task {
                         try? await Task.sleep(nanoseconds: 1_200_000_000) // 1.2 s
                         guard !Task.isCancelled else { return }
@@ -354,6 +385,15 @@ struct TreeRow: View {
         }
         group.notify(queue: .main) {
             guard !collected.isEmpty else { return }
+
+            // AirDrop: send via native sharing service (shows device picker with native icons)
+            if node.kind == .airdrop {
+                if let service = NSSharingService(named: .sendViaAirDrop) {
+                    service.perform(withItems: collected as [NSURL])
+                }
+                return
+            }
+
             let pairs = collected.map { src in
                 (from: src, to: destination.appendingPathComponent(src.lastPathComponent))
             }
@@ -367,6 +407,15 @@ struct TreeRow: View {
     // MARK: - Navigation
 
     private func navigateAction() {
+        // AirDrop: tell Finder to open its AirDrop browser window
+        if node.kind == .airdrop {
+            let task = Process()
+            task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+            task.arguments = ["-a", "Finder", "airdrop://"]
+            try? task.run()
+            return
+        }
+
         let alreadyHere = appState.activeBrowser.currentURL.standardizedFileURL
             == node.url.standardizedFileURL
 

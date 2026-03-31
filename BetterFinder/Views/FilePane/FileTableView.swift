@@ -806,11 +806,18 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
         let sel = tableView.selectedRowIndexes.compactMap { $0 < items.count ? items[$0] : nil }
         for item in sel {
             let path = item.url.path(percentEncoded: false)
+            let escaped = path
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "\"", with: "\\\"")
+            let script = """
+            tell application "Finder"
+                activate
+                open information window of (POSIX file "\(escaped)" as alias)
+            end tell
+            """
             let p = Process()
             p.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-            p.arguments = ["-e",
-                "tell application \"Finder\" to open information window of " +
-                "(POSIX file \"\(path.replacingOccurrences(of: "\"", with: "\\\""))\")"]
+            p.arguments = ["-e", script]
             try? p.run()
         }
     }

@@ -1,7 +1,21 @@
 # BetterFinder
 
-A native macOS file manager built with SwiftUI + AppKit, designed as a power-user replacement for Apple Finder.
-Target: macOS 26+, Apple Silicon (arm64).
+A native macOS file manager built with SwiftUI + AppKit — a power-user replacement for Apple Finder, inspired by Marta and ForkLift.
+
+> **Requires:** macOS 15 Sequoia or later · Apple Silicon (arm64)
+
+---
+
+## Download & Install
+
+1. Go to the [**Releases**](../../releases/latest) page and download **BetterFinder-x.x.x.dmg**
+2. Open the DMG and drag **BetterFinder** into your **Applications** folder
+3. Launch BetterFinder — on first run a prompt will appear asking for **Full Disk Access**
+4. Click **Open Privacy Settings**, enable the toggle next to BetterFinder, then **relaunch the app**
+
+### Why Full Disk Access?
+
+BetterFinder is a file manager — it needs to read every folder on your system, including protected directories (`~/Library`, `/System`, hidden paths) and run system-wide Spotlight searches. Without FDA, some folders will appear empty or be inaccessible.
 
 ---
 
@@ -10,14 +24,20 @@ Target: macOS 26+, Apple Silicon (arm64).
 1. [Navigation](#1-navigation)
 2. [Sidebar](#2-sidebar)
 3. [File Pane](#3-file-pane)
-4. [Dual Pane](#4-dual-pane)
-5. [File Operations](#5-file-operations)
-6. [Keyboard Shortcuts](#6-keyboard-shortcuts)
-7. [Terminal](#7-terminal)
-8. [Search](#8-search)
-9. [Toolbar](#9-toolbar)
-10. [Preferences](#10-preferences)
-11. [Planned / In Progress](#11-planned--in-progress)
+4. [Preview Panel](#4-preview-panel)
+5. [Dual Pane](#5-dual-pane)
+6. [File Operations](#6-file-operations)
+7. [Drop Stack](#7-drop-stack)
+8. [Trash Drop Zone](#8-trash-drop-zone)
+9. [Keyboard Shortcuts](#9-keyboard-shortcuts)
+10. [Terminal](#10-terminal)
+11. [Search](#11-search)
+12. [Toolbar](#12-toolbar)
+13. [Preferences](#13-preferences)
+14. [Global Hotkey](#14-global-hotkey)
+15. [macOS Integration](#15-macos-integration)
+16. [Architecture](#16-architecture)
+17. [Planned](#17-planned)
 
 ---
 
@@ -25,31 +45,60 @@ Target: macOS 26+, Apple Silicon (arm64).
 
 | Feature | Description | Status |
 |---|---|---|
-| Back / Forward | Navigate history per pane — `⌘[` / `⌘]` | ✅ |
+| Back / Forward | Per-pane history — `⌘[` / `⌘]` | ✅ |
 | Go Up | Navigate to parent folder — `⌘↑` | ✅ |
 | Go Home | Jump to home directory — `⌘⇧H` | ✅ |
-| Path Bar | Clickable breadcrumbs below toolbar, toggleable | ✅ |
+| Path Bar | Clickable breadcrumbs below the toolbar, toggleable | ✅ |
 | Single-click in sidebar | Navigates active pane to that folder | ✅ |
-| Double-click in file pane | Opens folder / launches file | ✅ |
+| Double-click in file pane | Opens folder / launches file with default app | ✅ |
+| Sidebar auto-collapses | When navigating back, sidebar tree closes folders that are no longer on the current path | ✅ |
 
 ---
 
 ## 2. Sidebar
 
+### Favorites
+
+Pinned shortcuts to the most common folders. Shown with Finder-style outlined SF Symbols.
+
+| Location | Icon |
+|---|---|
+| Applications | `square.grid.2x2` |
+| Desktop | `menubar.dock.rectangle` |
+| Documents | `doc` |
+| Downloads | `arrow.down.circle` |
+
+### Recents
+
+Collapsible section that remembers your last visited folders. Right-click any entry to open it in a specific pane, copy its path, or remove it.
+
+### Locations
+
+Dynamically populated — no hardcoding:
+
+| Location | How discovered |
+|---|---|
+| Macintosh HD | Always present (`/`) |
+| iCloud Drive | `~/Library/CloudStorage/iCloud*` (Ventura+) or legacy CloudDocs path |
+| Third-party cloud providers | All entries in `~/Library/CloudStorage/` (Nextcloud, OneDrive, Dropbox…) |
+| Home folder | `URL.homeDirectory` |
+| External volumes | `FileManager.mountedVolumeURLs` — updates on mount/unmount |
+| Network shares | Same enumeration, listed after local volumes |
+| Trash | `~/.Trash` |
+
+### Sidebar behaviour
+
 | Feature | Description | Status |
 |---|---|---|
-| Favorites section | Home, Desktop, Documents, Downloads | ✅ |
-| Locations section | Macintosh HD, iCloud Drive, mounted volumes, network shares | ✅ |
 | Lazy tree expansion | Children loaded on demand, spinner shown while loading | ✅ |
-| Auto-expand on navigate | Tree expands and highlights current folder when pane navigates | ✅ |
+| Auto-expand on navigate | Expands ancestors in Macintosh HD to reveal current folder | ✅ |
 | Auto-scroll to active | Active node scrolls into view when navigating | ✅ |
-| Toggle expand/collapse | Chevron click expands or collapses a folder | ✅ |
-| Re-expand collapsed folder | Click collapsed folder while already at its URL re-expands it | ✅ (bug fix) |
-| Drag & drop files | Drag files from pane onto a sidebar folder to move them | ✅ |
-| Spring loading | Hovering a dragged file over a sidebar folder for 1.2 s auto-expands it | ✅ |
-| Drop highlight | Sidebar row shows accent border and tinted background when drag is over it | ✅ |
-| Context menu | Right-click: Open in Pane 1, Open in Pane 2, Copy Path, Open in Terminal | ✅ |
-| Volume auto-refresh | Sidebar updates when external drives are mounted / unmounted | ✅ |
+| Auto-collapse on back | Folders opened by navigation close when you go to a different branch | ✅ |
+| Drag & drop files onto folder | Moves files; undo-registered (`⌘Z` reverses) | ✅ |
+| Spring loading | Hovering a drag over a sidebar row for 1.2 s auto-expands it | ✅ |
+| Volume auto-refresh | Sidebar updates when drives are mounted / unmounted | ✅ |
+| Context menu | Open in Pane 1, Open in Pane 2, Copy Path, Open in Terminal | ✅ |
+| Isolated expansion | Clicking a folder in one section never auto-opens it in another section | ✅ |
 
 ---
 
@@ -57,70 +106,121 @@ Target: macOS 26+, Apple Silicon (arm64).
 
 | Feature | Description | Status |
 |---|---|---|
-| Native NSTableView | AppKit table for performance and native interaction fidelity | ✅ |
+| Native NSTableView | AppKit table for performance and native interaction | ✅ |
 | Columns | Name (icon + label), Date Modified, Size, Kind | ✅ |
-| Column resizing | User can resize all columns | ✅ |
+| Column resizing | All columns user-resizable | ✅ |
 | Alternating row colors | macOS-standard zebra striping | ✅ |
-| Folders first | Directories always sorted above files | ✅ |
+| Folders before files | Optional toggle in Preferences → General (default: mixed) | ✅ |
 | Hidden files | Shown at 45 % opacity when "Show Dot Files" is on | ✅ |
 | Multi-selection | Click, Shift-click, ⌘-click, rubber-band drag | ✅ |
-| Drag & drop source | Drag files out of the pane to move/copy them | ✅ |
-| Drag & drop target | Drop files into the pane or onto a folder row | ✅ |
-| Drag ghost image | Ghost always shows icon + filename, never column text | ✅ (bug fix) |
-| Lazy icon loading | File icons loaded async, placeholder shown immediately | ✅ |
-| Context menu | Open, Open in Pane N, Copy Path, Move to Trash | ✅ |
-| Status bar | Shows item count and selected count at bottom of pane | ✅ |
-| Loading / error states | Spinner while loading, error message on failure | ✅ |
+| Drag & drop source/target | Drag out to move/copy; drop in or onto a row | ✅ |
+| Lazy icon loading | File icons loaded async; placeholder shown immediately | ✅ |
+| Inline rename | Triple-click, `⌘R`, or F2 — Esc to cancel, ↩ to confirm | ✅ |
+| Context menu | Open, Quick Look, Cut (`⌘X`), Copy, Copy Path, Get Info, Rename, Duplicate, Make Alias, Move to Trash | ✅ |
+| Context menu shortcuts | Key equivalents shown next to each item, fully customisable in Preferences | ✅ |
+| Status bar | Item count and selected count at bottom | ✅ |
 
 ---
 
-## 4. Dual Pane
+## 4. Preview Panel
+
+A resizable right-side panel toggled with **`⌘⌥P`** or the toolbar button.
+
+| Feature | Status |
+|---|---|
+| Image preview (JPEG, PNG, GIF, HEIC, WebP, SVG…) | ✅ |
+| PDF preview (first page) | ✅ |
+| Text / code preview with syntax awareness | ✅ |
+| Web content preview (HTML files) | ✅ |
+| Audio / video waveform placeholder | ✅ |
+| File info bar — Kind, Size, Modified, Created, full Path | ✅ |
+| Metadata labels left-aligned, path selectable | ✅ |
+| Updates instantly on selection change | ✅ |
+
+---
+
+## 5. Dual Pane
+
+Toggle with **`⌘D`**.
 
 | Feature | Description | Status |
 |---|---|---|
-| Toggle dual pane | `⌘D` — splits the detail area into two independent panes | ✅ |
-| Active pane indicator | Colored top border + tinted header + accent dot on active pane | ✅ |
-| Switch active pane | Click anywhere in a pane, or `⌘1` / `⌘2` | ✅ |
-| Per-pane search | Each pane header has its own search field (filters only that pane) | ✅ |
-| Per-pane terminal | F4 opens/closes the terminal in the active pane only | ✅ |
-| Per-pane status bar | Each pane shows its own item / selection count | ✅ |
-| Per-pane path bar | Each pane shows its own breadcrumb path bar | ✅ |
-| Per-pane navigation | Back/Forward/Up history is independent per pane | ✅ |
-| Swap panes | Toolbar button swaps the directories of the two panes | ✅ |
-| Toolbar search hidden | Global search bar is hidden in dual-pane mode (per-pane fields used instead) | ✅ |
-| Go to Other Pane | Navigates active pane to the other pane's current folder | ✅ |
-| Mirror Pane | Navigates the other pane to the active pane's current folder | ✅ |
-| Open in Pane 1 / 2 | Sidebar and file pane context menus target the specific pane by number | ✅ |
+| Two independent panes | Each pane has its own navigation history, selection, search and terminal | ✅ |
+| Active pane indicator | Accent top border + tinted header + dot | ✅ |
+| Switch active pane | Click anywhere in a pane or `⌘1` / `⌘2` | ✅ |
+| Swap panes | Toolbar button swaps the current directories of both panes | ✅ |
+| Per-pane search bar | Replaces the single toolbar search field in dual-pane mode | ✅ |
+| Per-pane terminal | F4 toggles the terminal in whichever pane is active | ✅ |
+| Go to Other Pane | Navigate active pane to the other pane's folder | ✅ |
+| Mirror Pane | Navigate the other pane to the active pane's folder | ✅ |
+| Copy / Move to Other Pane | F5 / F6 with confirmation dialog | ✅ |
 
 ---
 
-## 5. File Operations
+## 6. File Operations
 
-All operations work on the **active pane**. Destructive operations show a confirmation dialog.
+All operations target the **active pane**. Every destructive operation is **undo-registered** — `⌘Z` reverses it.
 
-| Operation | Trigger | Notes | Status |
+| Operation | Shortcut | Notes | Status |
 |---|---|---|---|
-| New File | `⌘⌥N`, Operations Bar, right-click empty space | Prompts for name, pre-filled "untitled" — creates empty file | ✅ |
-| New Folder | fn F7, Operations Bar, `⌘⇧N` menu, right-click empty space | Prompts for name, pre-filled "untitled folder" | ✅ |
-| Rename | `⌘R`, fn F2, triple-click, context menu, Operations Bar | Inline rename in-place — Esc to cancel, ↩ to confirm | ✅ |
-| Move to Trash | `⌘⌫`, Operations Bar, File menu, context menu | No confirmation needed | ✅ |
-| Copy to Other Pane | F5, Operations Bar, File menu | Dual-pane only — shows confirmation with destination path | ✅ |
-| Move to Other Pane | F6, Operations Bar, File menu | Dual-pane only — shows confirmation with destination path | ✅ |
-| Drag to move | Drag within pane or to sidebar | Moves file; falls back to copy on cross-volume | ✅ |
-| Open file | Double-click, ↩ | Opens with default app via NSWorkspace | ✅ |
-| Copy path | Context menu, sidebar context menu | Copies POSIX path to clipboard | ✅ |
+| New File | `⌘⌥N` | Prompts for name, creates empty file | ✅ |
+| New Folder | `⌘⇧N` / F7 | Prompts for name | ✅ |
+| Rename | `⌘R` / F2 / triple-click | Inline, in-place | ✅ |
+| Cut | `⌘X` | Stages selection for move; paste with `⌘V` | ✅ |
+| Copy path | `⌘⇧C` | Copies POSIX path to clipboard | ✅ |
+| Move to Trash | `⌘⌫` | No confirmation; `⌘Z` restores | ✅ |
+| Copy to Other Pane | F5 | Dual-pane only; confirmation dialog | ✅ |
+| Move to Other Pane | F6 | Dual-pane only; confirmation dialog | ✅ |
+| Quick Look | `Space` | System Quick Look panel | ✅ |
+| Get Info | `⌘I` | Opens Finder's Get Info panel | ✅ |
+| Duplicate | `⌘⌥D` | Creates a copy in the same folder | ✅ |
+| Make Alias | `⌘L` | Creates a `.alias` file | ✅ |
+| Undo / Redo | `⌘Z` / `⌘⇧Z` | Reverses rename, move, trash, new file/folder | ✅ |
+| Open file | `↩` / double-click | Opens with default app via NSWorkspace | ✅ |
+| Drag to move | Drag within pane or to sidebar | Undo-registered | ✅ |
 
 ### Operations Bar
 
-A persistent bar at the bottom of the window shows the most common operations with shortcut hints.
-Buttons are automatically disabled when no file is selected.
+Persistent bar at the bottom of the window with the most common actions and their shortcut hints. Buttons auto-disable when no selection is active.
 
-- Single pane: **Rename** (F2) · **New Folder** (F7) · **Trash** (⌘⌫)
-- Dual pane adds: **Copy to Pane N** (F5) · **Move to Pane N** (F6) · **Go to Other Pane** · **Mirror Pane**
+- **Single pane:** Rename (F2) · New Folder (F7) · Trash (⌘⌫)
+- **Dual pane adds:** Copy → Pane N (F5) · Move → Pane N (F6) · Go to Other Pane · Mirror Pane
 
 ---
 
-## 6. Keyboard Shortcuts
+## 7. Drop Stack
+
+A collapsible shelf in the sidebar (above Favorites) for temporarily holding files across navigation.
+
+| Feature | Status |
+|---|---|
+| Drag any file from the pane into the Drop Stack | ✅ |
+| Files persist while you navigate to the destination folder | ✅ |
+| **Copy** button — copies all stacked files to the active pane | ✅ |
+| **Move** button — moves all stacked files to the active pane | ✅ |
+| Remove individual items with ✕ | ✅ |
+| Clear all with the trash button | ✅ |
+| Drag a file out of the stack back to any pane | ✅ |
+| Auto-expands when you hover a drag over the "Drop Stack" header | ✅ |
+
+**Typical workflow:** open a folder, drag files you want to move into the Drop Stack, navigate to the destination, click **Move**.
+
+---
+
+## 8. Trash Drop Zone
+
+A collapsible panel below the Preview Panel for quick drag-to-trash.
+
+| Feature | Status |
+|---|---|
+| Drop files onto the zone to move them to Trash | ✅ |
+| Trash icon animates red on hover | ✅ |
+| Vertically resizable by dragging the top handle | ✅ |
+| "Open Trash" button / double-click navigates the active pane to `~/.Trash` | ✅ |
+
+---
+
+## 9. Keyboard Shortcuts
 
 ### Navigation
 
@@ -128,9 +228,9 @@ Buttons are automatically disabled when no file is selected.
 |---|---|
 | `⌘[` | Back |
 | `⌘]` | Forward |
-| `⌘↑` | Go to parent folder |
+| `⌘↑` | Enclosing folder |
 | `⌘⇧H` | Go to Home |
-| `↩` | Open selected file / enter folder |
+| `↩` | Open selected / enter folder |
 
 ### View
 
@@ -138,6 +238,7 @@ Buttons are automatically disabled when no file is selected.
 |---|---|
 | `⌘D` | Toggle dual pane |
 | `⌘⇧.` | Toggle hidden files |
+| `⌘⌥P` | Toggle Preview Panel |
 | F4 | Toggle terminal in active pane |
 
 ### Dual Pane
@@ -152,180 +253,202 @@ Buttons are automatically disabled when no file is selected.
 | Shortcut | Action |
 |---|---|
 | `⌘⌥N` | New File |
-| `⌘⇧N` | New Folder |
-| `⌘R` | Rename inline (single selection) |
+| `⌘⇧N` / F7 | New Folder |
+| `⌘R` / F2 | Rename (inline) |
+| `⌘X` | Cut (stage for move) |
+| `⌘C` | Copy path |
+| `⌘⇧C` | Copy path to clipboard |
 | `⌘⌫` | Move to Trash |
-| fn F5 | Copy selection to other pane (dual-pane only) |
-| fn F6 | Move selection to other pane (dual-pane only) |
-| fn F7 | New Folder |
+| `Space` | Quick Look |
+| `⌘I` | Get Info |
+| `⌘⌥D` | Duplicate |
+| `⌘L` | Make Alias |
+| `⌘Z` / `⌘⇧Z` | Undo / Redo |
+| F5 | Copy to other pane (dual-pane) |
+| F6 | Move to other pane (dual-pane) |
+
+All shortcuts are **fully customisable** in **Settings → Context Menu**.
 
 ---
 
-## 7. Terminal
+## 10. Terminal
 
 | Feature | Description | Status |
 |---|---|---|
 | Integrated terminal drawer | Slides up from the bottom of the active pane | ✅ |
-| Toggle | F4 — toggles the terminal in the active pane | ✅ |
-| Auto-cd on open | Terminal changes directory to the pane's current folder when opened | ✅ |
-| Auto-cd on navigate | Terminal follows pane navigation automatically | ✅ |
+| Toggle | F4 | ✅ |
+| Auto-cd on open | Changes to pane's current folder when opened | ✅ |
+| Auto-cd on navigate | Follows pane navigation automatically | ✅ |
 | Per-pane in dual mode | Each pane has its own independent terminal | ✅ |
-| Full shell support | Uses user's default shell (`$SHELL`) | ✅ |
-| Slide animation | Smooth ease-in/out transition when opening and closing | ✅ |
+| Resize | Drag the divider to adjust height | ✅ |
+| Font size | `⌘+` / `⌘−` in View menu | ✅ |
+| Full shell support | Uses `$SHELL` (zsh, bash, fish…) | ✅ |
 
 ---
 
-## 8. Search
+## 11. Search
 
 ### Default behaviour
-Filters the current folder by filename as you type — instant, client-side, no network or disk access. This is intentionally the opposite of macOS Finder, which searches the whole system and looks inside file contents by default.
+Filters the current folder by filename as you type — instant, client-side, no network or disk access. Intentionally the opposite of Finder, which searches the whole system by default.
 
 ### Search Filter Bar
-Appears automatically below the path bar whenever a search query is active. Disappears when the field is cleared.
+Appears automatically below the path bar whenever a query is active.
 
 | Control | Options | Default |
 |---|---|---|
 | **Scope** | This Folder · Subfolders · Home · Entire Disk | This Folder |
-| **Match mode** | Name Contains · Starts With · Ends With · Exact Name · Extension | Name Contains |
-| **File Kind** | Any Kind · Folder · File · Image · Video · Audio · Document · Code · Archive | Any Kind |
+| **Match** | Name Contains · Starts With · Ends With · Exact · Extension | Name Contains |
+| **Kind** | Any · Folder · File · Image · Video · Audio · Document · Code · Archive | Any |
 
-A **reset button** (×) appears on the right whenever any option differs from the default.
-
-### Scope details
-
-| Scope | How it works | Speed |
+| Scope | Mechanism | Speed |
 |---|---|---|
-| **This Folder** | Client-side filter on already-loaded items | Instant |
-| **Subfolders** | `FileManager.enumerator` recursive walk, up to 1 000 results | Fast (< 1 s) |
-| **Home** | Spotlight (`NSMetadataQuery`, `NSMetadataQueryUserHomeScope`) | ~1–2 s |
-| **Entire Disk** | Spotlight (`NSMetadataQueryLocalComputerScope`) | ~1–3 s |
+| This Folder | Client-side filter on loaded items | Instant |
+| Subfolders | `FileManager.enumerator` walk (≤ 1 000 results) | < 1 s |
+| Home | Spotlight `NSMetadataQueryUserHomeScope` | ~1–2 s |
+| Entire Disk | Spotlight `NSMetadataQueryLocalComputerScope` | ~1–3 s |
 
-In async scopes a spinner and result count appear in the filter bar. The "Kind" column header changes to **"Location"** and shows the parent folder name for each result, so you always know where a file lives.
-
-### Feature table
-
-| Feature | Status |
-|---|---|
-| Real-time name filter (current folder, client-side) | ✅ |
-| Search filter bar with scope / match / kind controls | ✅ |
-| Name Contains / Starts With / Ends With / Exact / Extension modes | ✅ |
-| Kind filter: Folder · File · Image · Video · Audio · Document · Code · Archive | ✅ |
-| Recursive subfolder search (FileManager, up to 1 000 results) | ✅ |
-| Home-directory search via Spotlight | ✅ |
-| Entire-disk search via Spotlight | ✅ |
-| 300 ms debounce on async searches | ✅ |
-| "Location" column shows parent folder in global search results | ✅ |
-| "No Results" empty state with hint | ✅ |
-| Reset button to restore default options | ✅ |
-| Single-pane search bar in toolbar | ✅ |
-| Per-pane search bar in dual-pane mode | ✅ |
-| Search inside file contents (opt-in, not default) | 🔲 planned |
+In async scopes a spinner and result count appear. The "Kind" column becomes **"Location"** showing the parent folder for each result.
 
 ---
 
-## 9. Toolbar
+## 12. Toolbar
 
-| Feature | Description | Status |
+| Button | Shortcut | Description |
 |---|---|---|
-| Back / Forward buttons | Navigate pane history | ✅ |
-| Go Up button | Navigate to parent | ✅ |
-| Search field | Centered, adaptive (hidden in dual-pane mode) | ✅ |
-| Hidden files toggle | Eye icon — persists across sessions | ✅ |
-| Dual pane toggle | Grid icon — `⌘D` | ✅ |
-| Swap panes button | Arrows icon — visible only in dual-pane mode | ✅ |
+| Back / Forward | `⌘[` / `⌘]` | Pane navigation history |
+| Go Up | `⌘↑` | Parent folder |
+| Search field | — | Adaptive (hidden in dual-pane mode) |
+| Hidden files toggle | `⌘⇧.` | Eye icon |
+| Preview Panel toggle | `⌘⌥P` | Sidebar right |
+| Dual pane toggle | `⌘D` | Grid icon |
+| Swap panes | — | Arrows icon (dual-pane only) |
+| Terminal toggle | F4 | Terminal icon |
 
 ---
 
-## 10. Preferences
+## 13. Preferences
 
-Native macOS Settings window — open with `⌘,` or **BetterFinder → Settings…**
-
-Stored in `AppPreferences` (`UserDefaults`-backed), persisted across sessions.
+Open with **`⌘,`** or **BetterFinder → Settings…**
 
 ### General
 
-| Preference | Default | Description |
-|---|---|---|
-| Show hidden files | `false` | Show dot files at 45 % opacity |
-| Show path bar | `true` | Breadcrumb bar below toolbar |
-| Show status bar | `true` | Item / selection count bar |
-| Start in dual-pane mode | `false` | Open with two panes on launch |
-| Open terminal by default | `false` | Show terminal drawer on launch |
+| Preference | Default |
+|---|---|
+| Show hidden files | off |
+| Show path bar | on |
+| Show status bar | on |
+| Start in dual-pane mode | off |
+| Open terminal by default | off |
+| Show folders before files | off |
 
 ### Search
 
-| Preference | Default | Description |
-|---|---|---|
-| Default scope | This Folder | Which scope is pre-selected when searching |
-| Default match mode | Name Contains | Which match mode is pre-selected |
-| Default file kind | Any Kind | Which file kind filter is pre-selected |
+Default scope, match mode, and file kind for new searches.
 
-### Shortcuts
+### Context Menu
 
-All file-operation and view shortcuts are fully customisable. Click any recorder field and press the desired key combination to reassign it. Press **Esc** to cancel, **⌫** to clear. A "Reset" link restores the factory default.
+Customise the keyboard shortcut shown next to each context menu item.
 
 | Action | Default |
 |---|---|
-| Rename | `⌘R` |
-| New File | `⌘⌥N` |
-| New Folder | `⌘⇧N` |
-| Move to Trash | `⌘⌫` |
-| Copy to Other Pane | `F5` |
-| Move to Other Pane | `F6` |
-| Toggle Hidden Files | `⌘⇧.` |
-| Toggle Terminal | `F4` |
-| Toggle Dual Pane | `⌘D` |
+| Quick Look | `Space` |
+| Cut | `⌘X` |
+| Copy | `⌘C` |
+| Copy Path | `⌘⇧C` |
+| Get Info | `⌘I` |
+| Duplicate | `⌘⌥D` |
+| Make Alias | `⌘L` |
+
+### Global Hotkey
+
+Customise the system-wide shortcut that brings BetterFinder to the front from any other app (default: **`⌘⇧B`**).
 
 ---
 
-## 11. Planned / In Progress
+## 14. Global Hotkey
 
-Features not yet implemented, ordered by priority.
+BetterFinder registers a **system-wide hotkey** that brings the app to the front instantly — even when you're in another app, a game, or a full-screen window.
 
-| Feature | Notes |
+**Default: `⌘⇧B`**
+
+- Works without Accessibility permissions (registered via Carbon `RegisterEventHotKey`)
+- Customisable in **Settings → Global Hotkey**
+- To disable: clear the field in Preferences
+
+---
+
+## 15. macOS Integration
+
+| Feature | Description |
 |---|---|
-| FSEvents file watcher | Auto-refresh pane when files change on disk without manual reload |
-| Column sorting | Click column headers to sort by name / date / size / kind |
-| Quick Look | `Space` key preview with enhanced support for `.md`, `.json`, `.csv`, code files |
-| Batch rename | Select multiple files → regex / prefix / suffix / sequential numbering |
-| Folder diff & sync | Compare two panes side by side, sync in either direction |
-| Size browser | Treemap visualization of disk usage for current folder |
-| Git status badges | Show modified/staged/untracked indicators on files in git repos |
-| Clipboard history | `⌘⇧V` popover with last N copied files |
-| Permissions viewer | `rwxrwxrwx` display + quick chmod buttons in info panel |
-| Tabs | Multiple browser tabs within a single window |
-| Favorites editing | Drag to reorder, add/remove items in the Favorites sidebar section |
-| Undo / Redo | Undo file operations (rename, move, trash) |
+| **Reveal in BetterFinder** | Appears in the right-click Services menu of any Cocoa app when a file is selected; navigates BetterFinder to that file's parent folder |
+| **Undo / Redo** | Plugged into macOS Edit menu — `⌘Z` / `⌘⇧Z` reverse all file operations |
+| **Quick Look** | Native `QLPreviewPanel` — supports all system-registered types |
+| **Get Info** | Opens Finder's native Get Info window (`⌘I`) |
+| **Drag & Drop** | Compatible with Finder and other apps as both source and destination |
 
 ---
 
-## Architecture
+## 16. Architecture
 
 ```
 BetterFinder/
-├── BetterFinderApp.swift        # Entry point, scene, menu commands, Settings scene
+├── BetterFinderApp.swift          # Entry point, menu commands, global hotkey, FDA onboarding
+├── ContentView.swift              # Root layout: sidebar ↔ pane(s) ↔ preview panel
 ├── State/
-│   ├── AppState.swift           # Global observable state, all file operations
-│   ├── BrowserState.swift       # Per-pane navigation, selection, search state
-│   └── AppPreferences.swift     # UserDefaults-backed preferences (view, startup, search, shortcuts)
-├── Views/
-│   ├── ContentView.swift        # Root layout: sidebar + single/dual pane
-│   ├── Toolbar/                 # BrowserToolbar, search field
-│   ├── Sidebar/                 # SidebarView, TreeRow
-│   ├── FilePane/                # FilePaneView, FileTableView (NSTableView)
-│   ├── PathBar/                 # PathBarView (breadcrumbs)
-│   ├── StatusBar/               # StatusBarView (item/selection count)
-│   ├── Terminal/                # TerminalPanelView, F4KeyMonitor
-│   ├── Operations/              # OperationsBarView
-│   ├── Search/                  # SearchFilterBar
-│   └── Preferences/             # PreferencesView (3 tabs), ShortcutRecorderField
+│   ├── AppState.swift             # Global state, all file operations, Drop Stack, undo
+│   ├── BrowserState.swift         # Per-pane navigation, selection, search, terminal
+│   └── AppPreferences.swift       # UserDefaults-backed prefs (view, startup, search, shortcuts)
 ├── Models/
-│   ├── FileItem.swift           # File metadata value type
-│   ├── TreeNode.swift           # Sidebar tree node
-│   ├── AppShortcut.swift        # Codable keyboard shortcut (keyCode + modifiers)
-│   └── SearchOptions.swift      # Search scope / match mode / file kind
-└── Services/
-    ├── FileSystemService.swift  # Async directory loading
-    ├── SearchService.swift      # Recursive + Spotlight search engine
-    └── TreeController.swift     # Sidebar tree expand/collapse/flatten logic
+│   ├── FileItem.swift             # File metadata value type
+│   ├── TreeNode.swift             # Sidebar tree node (kind, icon, lazy children)
+│   ├── AppShortcut.swift          # Codable keyboard shortcut (keyCode + modifiers)
+│   └── SearchOptions.swift        # Search scope / match mode / file kind
+├── Services/
+│   ├── FileSystemService.swift    # Async directory loading (POSIX readdir for sidebar)
+│   ├── SearchService.swift        # Recursive + Spotlight search engine
+│   ├── GlobalHotkeyManager.swift  # Carbon RegisterEventHotKey — no Accessibility needed
+│   ├── ServiceProvider.swift      # NSServices "Reveal in BetterFinder"
+│   └── DirectoryWatcher.swift     # FSEvents watcher
+├── Views/
+│   ├── Toolbar/                   # BrowserToolbar, adaptive search field
+│   ├── Sidebar/                   # SidebarView, TreeRow, collapsible sections
+│   ├── DropStack/                 # SidebarDropStackSection
+│   ├── FilePane/                  # FilePaneView, FileTableView (NSTableView)
+│   ├── Preview/                   # PreviewPanelView, FilePreviewContent, FileInfoBar
+│   ├── Trash/                     # TrashDropZoneView (resizable, drag-to-trash)
+│   ├── PathBar/                   # Clickable breadcrumbs
+│   ├── Terminal/                  # TerminalPanelView, SwiftTermView, F4KeyMonitor
+│   ├── Operations/                # OperationsBarView
+│   ├── Search/                    # SearchFilterBar
+│   ├── Preferences/               # PreferencesView (4 tabs), ShortcutRecorderField
+│   └── Onboarding/                # FullDiskAccessView (first-launch FDA prompt)
+└── State/
+    └── TreeController.swift       # Sidebar expand/collapse/flatten, collapseIrrelevantNodes
 ```
+
+### Key design decisions
+
+- **No sandbox** — required for a file manager that reads the whole filesystem
+- **Full Disk Access** — requested on first launch; needed for protected directories
+- **NSTableView over SwiftUI List** — needed for performance (thousands of rows), column resizing, and drag ghost image control
+- **@Observable** — all state uses Swift 5.9 `@Observable`; no `ObservableObject`
+- **POSIX readdir** for sidebar tree — avoids `URLResourceValues` latency when expanding large directories
+- **Carbon RegisterEventHotKey** — system-wide hotkey without requiring Accessibility permissions
+
+---
+
+## 17. Planned
+
+| Feature | Notes |
+|---|---|
+| FSEvents file watcher | Auto-refresh pane when files change on disk |
+| Column header sorting | Click columns to sort by name / date / size / kind |
+| Batch rename | Regex / prefix / suffix / sequential numbering |
+| Folder diff & sync | Compare two panes, sync in either direction |
+| Size browser | Treemap / disk usage visualisation |
+| Git status badges | Modified/staged/untracked indicators on files in git repos |
+| Permissions viewer | `rwxrwxrwx` display + chmod buttons in preview panel |
+| Tabs | Multiple browser tabs per window |
+| Favorites editing | Drag to reorder, add/remove items |
+| SMB / WebDAV connections | Mount network shares directly from the sidebar |

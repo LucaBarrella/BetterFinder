@@ -5,12 +5,26 @@ struct BetterFinderApp: App {
     @State private var appState = AppState()
     @State private var serviceProvider = ServiceProvider()
     @State private var hotkeyManager: GlobalHotkeyManager?
+    @State private var showFDAPrompt = false
+    @AppStorage("hasPromptedFullDiskAccess") private var hasPromptedFDA = false
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(appState)
+                .sheet(isPresented: $showFDAPrompt) {
+                    FullDiskAccessView {
+                        hasPromptedFDA = true
+                        showFDAPrompt = false
+                    }
+                }
                 .onAppear {
+                    // Show Full Disk Access prompt on first launch if not already granted
+                    if !hasPromptedFDA && !FullDiskAccessChecker.isGranted() {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                            showFDAPrompt = true
+                        }
+                    }
                     // Register the Services provider so "Reveal in BetterFinder"
                     // appears in the right-click menu of any Cocoa app.
                     serviceProvider.appState = appState

@@ -30,16 +30,24 @@ struct ContentView: View {
 
     @ViewBuilder
     private var detailContent: some View {
-        if appState.preferences.showPreviewPanel {
-            HSplitView {
-                panesArea
-                    .frame(minWidth: 380)
-                PreviewPanelView(url: previewURL)
-                    .frame(minWidth: 260, idealWidth: 320, maxWidth: 540)
-            }
-        } else {
+        // Always keep HSplitView in the hierarchy so panesArea is never destroyed
+        // on preview panel toggle — avoids the jarring remount jump.
+        HSplitView {
             panesArea
+                .frame(minWidth: 380)
+            if appState.preferences.showPreviewPanel {
+                rightPanel
+            }
         }
+    }
+
+    // Right column: stable VStack — no conditional tree swap → no jump.
+    private var rightPanel: some View {
+        VStack(spacing: 0) {
+            PreviewPanelView(url: previewURL)
+            TrashDropZoneView()
+        }
+        .frame(minWidth: 240, idealWidth: 300, maxWidth: 520)
     }
 
     @ViewBuilder

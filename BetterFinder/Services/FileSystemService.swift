@@ -67,10 +67,14 @@ actor FileSystemService {
             }
         }
 
-        // Exclude .app bundles (packages) – they appear as dirs but act as files
+        // Exclude .app bundles (packages) – they appear as dirs but act as files.
+        // Also exclude macOS NFS automount virtual directories at root level (/home, /net)
+        // that are always present but not real user-accessible locations.
+        let automountNames: Set<String> = path == "/" ? ["home", "net"] : []
         let filtered = result.filter { url in
             !url.pathExtension.lowercased().hasSuffix("app") &&
-            !url.pathExtension.lowercased().hasSuffix("bundle")
+            !url.pathExtension.lowercased().hasSuffix("bundle") &&
+            !automountNames.contains(url.lastPathComponent)
         }
 
         return filtered.sorted {

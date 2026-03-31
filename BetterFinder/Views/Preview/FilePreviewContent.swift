@@ -485,7 +485,7 @@ struct FileInfoBar: View {
                 ForEach(rows, id: \.0) { label, value in
                     GridRow(alignment: .top) {
                         Text(label)
-                            .gridColumnAlignment(.trailing)
+                            .gridColumnAlignment(.leading)
                             .foregroundStyle(.secondary)
                             .fixedSize()
                         Text(value)

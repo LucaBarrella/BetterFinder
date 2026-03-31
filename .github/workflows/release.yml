@@ -1,0 +1,47 @@
+name: Build & Release
+
+# Triggered when you push a version tag, e.g. git tag v1.0.0 && git push --tags
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+
+permissions:
+  contents: write   # needed to create a GitHub Release and upload assets
+
+jobs:
+  release:
+    name: Build DMG and publish release
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Derive version from tag
+        run: |
+          TAG="${GITHUB_REF_NAME}"          # e.g. v1.0.0
+          echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"   # strip leading 'v'
+
+      - name: Build DMG
+        run: bash make-release.sh
+        env:
+          VERSION: ${{ env.VERSION }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "BetterFinder ${{ github.ref_name }}"
+          body: |
+            ## Download & Install
+
+            1. Download **BetterFinder-${{ env.VERSION }}.dmg** below
+            2. Open the DMG and drag **BetterFinder** into your **Applications** folder
+            3. Launch BetterFinder — on first run you will be prompted to grant **Full Disk Access**
+               *(System Settings → Privacy & Security → Full Disk Access → add BetterFinder)*
+            4. Relaunch the app after granting access
+
+            > **macOS requirement:** macOS 15 Sequoia or later · Apple Silicon (arm64)
+          files: build/BetterFinder-${{ env.VERSION }}.dmg
+          draft: false
+          prerelease: false
