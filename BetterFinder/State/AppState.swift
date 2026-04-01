@@ -9,6 +9,7 @@ final class AppState {
     // MARK: - Services
 
     let fileSystemService: FileSystemService
+    let volumeService: VolumeService
     let preferences = AppPreferences()
     let undoManager = UndoManager()
     /// Tracked so SwiftUI menu items can observe canUndo / canRedo reactively.
@@ -66,7 +67,6 @@ final class AppState {
         guard alert.runModal() == .alertFirstButtonReturn else { return }
 
         let destination = dst.currentURL
-        let showHidden  = preferences.showHiddenFiles
 
         if removing {
             let pairs = sel.map { (from: $0.url, to: destination.appendingPathComponent($0.name)) }
@@ -356,9 +356,11 @@ final class AppState {
     init() {
         let home = URL.homeDirectory
         let svc  = FileSystemService()
+        let vol  = VolumeService()
         self.fileSystemService = svc
-        self.primaryBrowser    = BrowserState(url: home, fileSystemService: svc)
-        self.secondaryBrowser  = BrowserState(url: home, fileSystemService: svc)
+        self.volumeService = vol
+        self.primaryBrowser    = BrowserState(url: home, fileSystemService: svc, volumeService: vol)
+        self.secondaryBrowser  = BrowserState(url: home, fileSystemService: svc, volumeService: vol)
 
         setupTreeRoots()
         setupFavorites()
@@ -493,9 +495,53 @@ final class AppState {
         let nodes = favURLs.map { TreeNode(url: $0.0, kind: $0.1) }
         favoritesController.setRoots(nodes)
     }
+
+    var alertPresenter: ((String, String) -> Void)?
+
+    /// Ejects the volume at the given URL and refreshes the UI.
+    ///
+    /// - Parameter url: The file URL of the volume to eject.
+    func ejectVolume(for url: URL) async {
+        do {
+            try await volumeService.ejectVolume(at: url)
+            await MainActor.run { self.refreshAfterEject() }
+        } catch {
+            await MainActor.run { self.showAlertForEjectError(error) }
+        }
+    }
+
+    @MainActor
+    private func refreshAfterEject() {
+        setupTreeRoots()
+        primaryBrowser.refreshVolumeEjectableCache()
+        secondaryBrowser.refreshVolumeEjectableCache()
+        Task {
+            await primaryBrowser.silentRefresh()
+            await secondaryBrowser.silentRefresh()
+        }
+    }
+
+    @MainActor
+    private func showAlertForEjectError(_ error: Error) {
+        if let presenter = alertPresenter {
+            presenter(
+                NSLocalizedString("EJECT_ALERT_TITLE", comment: ""),
+                error.localizedDescription
+            )
+            return
+        }
+        let alert = NSAlert()
+        alert.messageText = NSLocalizedString("EJECT_ALERT_TITLE", comment: "")
+        alert.informativeText = error.localizedDescription
+        alert.addButton(withTitle: NSLocalizedString("EJECT_ALERT_OK", comment: ""))
+        if let window = NSApp.mainWindow {
+            alert.beginSheetModal(for: window) { _ in }
+        } else {
+            alert.runModal()
+        }
+    }
 }
 
-// MARK: - SidebarItem (future use)
 struct SidebarItem: Identifiable, Hashable {
     let id = UUID()
     let name: String

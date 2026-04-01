@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import AppKit
 
 // MARK: - Sidebar
 
@@ -93,7 +94,7 @@ private struct SectionHeader: View {
         // 10 (leading) + 10 (chevron placeholder) + 4 (spacing) = 24 → aligns text
         // with CollapsibleSectionHeader and SidebarDropStackSection
         HStack(spacing: 4) {
-            Color.clear.frame(width: 10)   // placeholder for chevron width
+            Color.clear.frame(width: 10)
             Text(title.uppercased())
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(.secondary)
@@ -148,7 +149,7 @@ private struct RecentRow: View {
     var body: some View {
         Button { appState.activeBrowser.navigate(to: url) } label: {
             HStack(spacing: 6) {
-                Color.clear.frame(width: 20)           // indent to align with tree rows
+                Color.clear.frame(width: 20)
                 Image(systemName: "clock.arrow.circlepath")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
@@ -202,6 +203,8 @@ struct TreeRow: View {
     @State private var isDragTargeted = false
     @State private var springLoadTask: Task<Void, Never>?
     @State private var folderIcon: NSImage?
+    @State private var isEjecting = false
+    @State private var isVolumeEjectable = false
 
     private var node: TreeNode { flatNode.node }
 
@@ -300,7 +303,28 @@ struct TreeRow: View {
             }
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity)
-            .padding(.trailing, 16)
+
+            if isVolumeEjectable {
+                Button {
+                    isEjecting = true
+                    Task {
+                        await appState.ejectVolume(for: node.url)
+                        isEjecting = false
+                    }
+                } label: {
+                    Image(systemName: "eject.fill")
+                        .foregroundStyle(.primary)
+                        .font(.system(size: 11))
+                }
+                .buttonStyle(.plain)
+                .opacity(isEjecting ? 0.5 : 1)
+                .disabled(isEjecting)
+                .help(Text("Eject"))
+                .accessibilityLabel(Text("Eject volume"))
+                .padding(.trailing, 8)
+            } else {
+                Color.clear.frame(width: 8)
+            }
         }
         .frame(height: 26)
         .background(
@@ -341,10 +365,33 @@ struct TreeRow: View {
                 appState.activeBrowser.showTerminal = true
                 appState.activeBrowser.terminalChangeDirectory?(node.url)
             }
+            if node.kind == .volume && isVolumeEjectable {
+                Divider()
+                Button {
+                    isEjecting = true
+                    Task {
+                        await appState.ejectVolume(for: node.url)
+                        isEjecting = false
+                    }
+                } label: {
+                    if isEjecting {
+                        ProgressView().controlSize(.small)
+                        Text(String(format: NSLocalizedString("EJECTING_FMT", comment: ""), node.name))
+                    } else {
+                        Text(String(format: NSLocalizedString("EJECT_BUTTON", comment: ""), node.name))
+                    }
+                }
+                .disabled(isEjecting)
+            }
+        }
+        .task(id: node.url) {
+            guard node.kind == .volume else {
+                isVolumeEjectable = false
+                return
+            }
+            isVolumeEjectable = await appState.volumeService.isEjectableVolumeAsync(node.url)
         }
     }
-
-    // MARK: - Drop
 
     private var dragTargetBinding: Binding<Bool> {
         Binding(
@@ -429,6 +476,7 @@ struct TreeRow: View {
         }
         // Collapsed + URL changes: onChange fires and calls expandNode automatically.
     }
+
 }
 
 #Preview {
