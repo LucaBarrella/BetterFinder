@@ -1,0 +1,12 @@
+{
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Models/AppShortcut.swift" : {
+    "abi-baseline-json" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder.abi.json",
+    "const-values" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.swiftconstvalues",
+    "dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.d",
+    "diagnostics" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.dia",
+    "objc-header" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-Swift.h",
+    "swiftdoc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder.swiftdoc",
+    "swiftmodule" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder.swiftmodule",
+    "swiftsourceinfo" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder.swiftsourceinfo"
+  }
+}

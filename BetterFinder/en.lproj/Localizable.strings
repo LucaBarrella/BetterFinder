@@ -1,0 +1,9 @@
+/* Eject Volume */
+"EJECT_VOLUME_TOOLTIP" = "Eject volume";
+"EJECT_BUTTON" = "Eject";
+"EJECT_FAILED_FMT" = "Eject failed: %@";
+"VOLUME_NOT_EJECTABLE" = "This volume is not ejectable";
+"VOLUME_MOUNT_NOT_FOUND" = "Volume mount point not found";
+"DISKUTIL_NOT_FOUND" = "diskutil not found";
+"DISKUTIL_TIMEOUT" = "diskutil timed out";
+"UNKNOWN_ERROR" = "Unknown error";

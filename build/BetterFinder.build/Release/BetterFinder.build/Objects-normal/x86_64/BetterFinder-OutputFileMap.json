@@ -1,0 +1,201 @@
+{
+  "" : {
+    "const-values" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.swiftconstvalues",
+    "dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.d",
+    "diagnostics" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.dia",
+    "emit-module-dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary-emit-module.dia",
+    "pch" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinder-primary.swiftdeps"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/BetterFinderApp.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinderApp.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinderApp.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BetterFinderApp.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/ContentView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ContentView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Models/AppShortcut.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppShortcut.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppShortcut.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppShortcut.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Models/FileItem.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileItem.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileItem.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileItem.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Models/SearchOptions.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchOptions.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchOptions.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchOptions.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Models/TreeNode.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TreeNode.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TreeNode.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TreeNode.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/DirectoryWatcher.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/DirectoryWatcher.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/DirectoryWatcher.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/DirectoryWatcher.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/FileSystemService.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileSystemService.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileSystemService.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileSystemService.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/GlobalHotkeyManager.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/GlobalHotkeyManager.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/GlobalHotkeyManager.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/GlobalHotkeyManager.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/SearchService.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchService.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchService.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchService.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/ServiceProvider.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ServiceProvider.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ServiceProvider.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ServiceProvider.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/TerminalEngine.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalEngine.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalEngine.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalEngine.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/TerminalSession.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalSession.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalSession.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalSession.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Services/VolumeService.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/VolumeService.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/VolumeService.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/VolumeService.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/State/AppPreferences.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppPreferences.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppPreferences.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppPreferences.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/State/AppState.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppState.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppState.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/AppState.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/State/BrowserState.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BrowserState.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BrowserState.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/BrowserState.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/State/TreeController.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TreeController.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TreeController.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TreeController.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/DropStack/DropStackView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/DropStackView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/DropStackView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/DropStackView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/FilePane/FilePaneView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FilePaneView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FilePaneView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FilePaneView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/FilePane/FileTableView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileTableView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileTableView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FileTableView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Onboarding/FullDiskAccessView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FullDiskAccessView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FullDiskAccessView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FullDiskAccessView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Operations/OperationsBarView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/OperationsBarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/OperationsBarView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/OperationsBarView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/PathBar/PathBarView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PathBarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PathBarView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PathBarView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Preferences/PreferencesView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PreferencesView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PreferencesView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PreferencesView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Preferences/ShortcutRecorderField.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ShortcutRecorderField.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ShortcutRecorderField.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ShortcutRecorderField.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Preview/FilePreviewContent.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FilePreviewContent.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FilePreviewContent.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/FilePreviewContent.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Preview/PreviewPanelView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PreviewPanelView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PreviewPanelView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/PreviewPanelView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Search/SearchFilterBar.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchFilterBar.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchFilterBar.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SearchFilterBar.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Sidebar/SidebarView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SidebarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SidebarView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SidebarView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/StatusBarView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/StatusBarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/StatusBarView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/StatusBarView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Terminal/F4KeyMonitor.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/F4KeyMonitor.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/F4KeyMonitor.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/F4KeyMonitor.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Terminal/SwiftTermView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SwiftTermView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SwiftTermView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/SwiftTermView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Terminal/TerminalNSView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalNSView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalNSView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalNSView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Terminal/TerminalPanelView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalPanelView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalPanelView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TerminalPanelView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Toolbar/ToolbarView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ToolbarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ToolbarView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/ToolbarView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinder/Views/Trash/TrashDropZoneView.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TrashDropZoneView.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TrashDropZoneView.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/TrashDropZoneView.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinder.build/Objects-normal/x86_64/GeneratedAssetSymbols.o"
+  }
+}

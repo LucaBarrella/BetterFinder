@@ -1,0 +1,21 @@
+{
+  "" : {
+    "const-values" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary.swiftconstvalues",
+    "dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary.d",
+    "diagnostics" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary.dia",
+    "emit-module-dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary-emit-module.dia",
+    "pch" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests-primary.swiftdeps"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinderTests/BetterFinderTests.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BetterFinderTests.o"
+  },
+  "/Users/lucabarrella/Documents/BetterFinder/BetterFinderTests/BrowserVolumeTests.swift" : {
+    "index-unit-output-path" : "/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BrowserVolumeTests.o",
+    "llvm-bc" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BrowserVolumeTests.bc",
+    "object" : "/Users/lucabarrella/Documents/BetterFinder/build/BetterFinder.build/Release/BetterFinderTests.build/Objects-normal/arm64/BrowserVolumeTests.o"
+  }
+}

@@ -20,7 +20,13 @@ enum VolumeError: Error, LocalizedError {
     }
 }
 
-final class VolumeService {
+protocol VolumeServiceProtocol: Sendable {
+    func volumeMountPoint(for url: URL) -> URL?
+    func isEjectableVolume(_ url: URL) -> Bool
+    func isEjectableVolumeAsync(_ url: URL) async -> Bool
+}
+
+final class VolumeService: VolumeServiceProtocol {
 
     private let diskUtilPath = "/usr/sbin/diskutil"
 
@@ -85,8 +91,18 @@ final class VolumeService {
         ) ?? []
 
         let normalizedPath = url.standardizedFileURL.path
-        return mountedVolumes
-            .filter { normalizedPath.hasPrefix($0.standardizedFileURL.path) }
+        let excludedPaths = ["/", "/Volumes"]
+        let validVolumes = mountedVolumes.filter { volume in
+            let volumePath = volume.standardizedFileURL.path
+            return !excludedPaths.contains(volumePath) && normalizedPath.hasPrefix(volumePath)
+        }
+
+        return validVolumes
+            .filter { volume in
+                let volumePath = volume.standardizedFileURL.path
+                let remaining = String(normalizedPath.dropFirst(volumePath.count))
+                return remaining.isEmpty || remaining.hasPrefix("/")
+            }
             .max(by: { $0.path.count < $1.path.count })
     }
 

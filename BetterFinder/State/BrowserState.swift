@@ -63,11 +63,12 @@ final class BrowserState {
     private var history: [HistoryEntry]
     private var historyIndex: Int
     private let fileSystemService: FileSystemService
-    private let volumeService: VolumeService?
+    private let volumeService: VolumeServiceProtocol?
     private var watcher: DirectoryWatcher?
     private var watchedURL: URL?
     private var showHiddenCache = false
     private var currentVolumeIsEjectableCache: Bool?
+    private var volumeEjectableRefreshTask: Task<Void, Never>?
 
     // MARK: - Computed
 
@@ -88,19 +89,21 @@ final class BrowserState {
     }
 
     func refreshVolumeEjectableCache() {
+        volumeEjectableRefreshTask?.cancel()
         guard let volumeService, let volumeURL = currentVolumeURL else {
             currentVolumeIsEjectableCache = false
             return
         }
-        let cacheSetter = { [weak self] (isEjectable: Bool) in
-            self?.currentVolumeIsEjectableCache = isEjectable
-        }
-        Task.detached(priority: .userInitiated) {
-            let isEjectable = await volumeService.isEjectableVolumeAsync(volumeURL)
+        let capturedVolumeURL = volumeURL
+        let task = Task.detached(priority: .userInitiated) { [weak self] in
+            let isEjectable = await volumeService.isEjectableVolumeAsync(capturedVolumeURL)
             await MainActor.run {
-                cacheSetter(isEjectable)
+                guard let self, !Task.isCancelled,
+                      self.currentVolumeURL == capturedVolumeURL else { return }
+                self.currentVolumeIsEjectableCache = isEjectable
             }
         }
+        volumeEjectableRefreshTask = task
     }
 
     var filteredItems: [FileItem] {
@@ -139,7 +142,7 @@ final class BrowserState {
 
     // MARK: - Init
 
-    init(url: URL, fileSystemService: FileSystemService, volumeService: VolumeService? = nil) {
+    init(url: URL, fileSystemService: FileSystemService, volumeService: VolumeServiceProtocol? = nil) {
         self.currentURL = url
         self.fileSystemService = fileSystemService
         self.volumeService = volumeService

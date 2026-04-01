@@ -1,0 +1,11 @@
+Target dependency graph (5 targets)
+Target 'BetterFinderTests' in project 'BetterFinder'
+➜ Explicit dependency on target 'BetterFinder' in project 'BetterFinder'
+Target 'BetterFinder' in project 'BetterFinder'
+➜ Explicit dependency on target 'SwiftTerm' in project 'SwiftTerm'
+Target 'SwiftTerm' in project 'SwiftTerm'
+➜ Explicit dependency on target 'SwiftTerm' in project 'SwiftTerm'
+➜ Explicit dependency on target 'SwiftTerm_SwiftTerm' in project 'SwiftTerm'
+Target 'SwiftTerm' in project 'SwiftTerm'
+➜ Explicit dependency on target 'SwiftTerm_SwiftTerm' in project 'SwiftTerm'
+Target 'SwiftTerm_SwiftTerm' in project 'SwiftTerm' (no dependencies)

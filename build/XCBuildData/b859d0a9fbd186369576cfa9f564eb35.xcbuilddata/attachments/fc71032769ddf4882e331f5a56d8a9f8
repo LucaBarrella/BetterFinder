@@ -1,0 +1,316 @@
+{
+  "" : {
+    "const-values" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary.swiftconstvalues",
+    "dependencies" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary.d",
+    "diagnostics" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary.dia",
+    "emit-module-dependencies" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary-emit-module.dia",
+    "pch" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftTerm-primary.swiftdeps"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/AppleTerminalView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/AppleTerminalView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/AppleTerminalView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/AppleTerminalView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/BlockElementRenderer.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BlockElementRenderer.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BlockElementRenderer.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BlockElementRenderer.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/BoxDrawingRenderer.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BoxDrawingRenderer.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BoxDrawingRenderer.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BoxDrawingRenderer.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/CaretView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CaretView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CaretView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CaretView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/Extensions.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Extensions.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Extensions.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Extensions.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/Metal/CoreTextGlyphRasterizer.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CoreTextGlyphRasterizer.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CoreTextGlyphRasterizer.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CoreTextGlyphRasterizer.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/Metal/GlyphAtlas.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/GlyphAtlas.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/GlyphAtlas.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/GlyphAtlas.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/Metal/MetalBufferingMode.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalBufferingMode.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalBufferingMode.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalBufferingMode.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/Metal/MetalError.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalError.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalError.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalError.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/Metal/MetalTerminalRenderer.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalTerminalRenderer.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalTerminalRenderer.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MetalTerminalRenderer.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/TerminalProgressBarView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalProgressBarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalProgressBarView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalProgressBarView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Apple/TerminalViewDelegate.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalViewDelegate.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalViewDelegate.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalViewDelegate.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Buffer.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Buffer.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Buffer.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Buffer.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/BufferLine.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BufferLine.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BufferLine.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BufferLine.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/BufferSet.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BufferSet.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BufferSet.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/BufferSet.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/CharData.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CharData.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CharData.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CharData.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/CharSets.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CharSets.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CharSets.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CharSets.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/CircularList.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CircularList.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CircularList.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/CircularList.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Colors.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Colors.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Colors.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Colors.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/EscapeSequenceParser.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/EscapeSequenceParser.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/EscapeSequenceParser.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/EscapeSequenceParser.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/EscapeSequences.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/EscapeSequences.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/EscapeSequences.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/EscapeSequences.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/ExtensionsTerminal.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/ExtensionsTerminal.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/ExtensionsTerminal.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/ExtensionsTerminal.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/File.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/File.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/File.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/File.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/HeadlessTerminal.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/HeadlessTerminal.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/HeadlessTerminal.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/HeadlessTerminal.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/KittyGraphics.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyGraphics.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyGraphics.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyGraphics.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/KittyKeyboardEncoder.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyKeyboardEncoder.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyKeyboardEncoder.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyKeyboardEncoder.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/KittyKeyboardProtocol.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyKeyboardProtocol.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyKeyboardProtocol.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyKeyboardProtocol.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/KittyPlaceholder.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyPlaceholder.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyPlaceholder.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/KittyPlaceholder.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Line.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Line.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Line.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Line.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/LocalProcess.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/LocalProcess.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/LocalProcess.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/LocalProcess.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacAccessibilityService.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacAccessibilityService.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacAccessibilityService.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacAccessibilityService.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacCaretView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacCaretView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacCaretView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacCaretView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacDebugView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacDebugView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacDebugView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacDebugView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacExtensions.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacExtensions.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacExtensions.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacExtensions.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacFindBarView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacFindBarView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacFindBarView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacFindBarView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacLocalTerminalView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacLocalTerminalView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacLocalTerminalView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacLocalTerminalView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/MacTerminalView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacTerminalView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacTerminalView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/MacTerminalView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Position.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Position.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Position.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Position.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Pty.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Pty.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Pty.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Pty.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SearchEngine.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchEngine.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchEngine.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchEngine.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SearchLineCache.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchLineCache.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchLineCache.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchLineCache.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SearchOptions.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchOptions.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchOptions.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchOptions.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SearchService.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchService.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchService.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchService.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SearchState.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchState.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchState.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SearchState.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SelectionService.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SelectionService.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SelectionService.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SelectionService.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/SixelDcsHandler.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SixelDcsHandler.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SixelDcsHandler.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SixelDcsHandler.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Terminal.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Terminal.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Terminal.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Terminal.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/TerminalOptions.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalOptions.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalOptions.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalOptions.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/TerminalViewSearch.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalViewSearch.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalViewSearch.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/TerminalViewSearch.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/UnicodeWidthData.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/UnicodeWidthData.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/UnicodeWidthData.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/UnicodeWidthData.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/Utilities.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Utilities.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Utilities.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/Utilities.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/SwiftUITerminalView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftUITerminalView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftUITerminalView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/SwiftUITerminalView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSAccessoryView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSAccessoryView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSAccessoryView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSAccessoryView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSCaretView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSCaretView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSCaretView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSCaretView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSDoubleButton.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSDoubleButton.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSDoubleButton.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSDoubleButton.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSExtensions.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSExtensions.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSExtensions.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSExtensions.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSKeyboardView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSKeyboardView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSKeyboardView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSKeyboardView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSTerminalView.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTerminalView.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTerminalView.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTerminalView.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSTextInput.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTextInput.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTextInput.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTextInput.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/Sources/SwiftTerm/iOS/iOSTextStorage.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTextStorage.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTextStorage.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/iOSTextStorage.o"
+  },
+  "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/DerivedSources/resource_bundle_accessor.swift" : {
+    "index-unit-output-path" : "/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/resource_bundle_accessor.o",
+    "llvm-bc" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/resource_bundle_accessor.bc",
+    "object" : "/Users/lucabarrella/Library/Developer/Xcode/DerivedData/BetterFinder-apoovhyetdzockfiezfbobbrczzw/SourcePackages/checkouts/SwiftTerm/build/SwiftTerm.build/Release/SwiftTerm.build/Objects-normal/x86_64/resource_bundle_accessor.o"
+  }
+}

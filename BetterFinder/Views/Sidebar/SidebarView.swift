@@ -318,8 +318,8 @@ struct TreeRow: View {
                 .buttonStyle(.plain)
                 .opacity(isEjecting ? 0.5 : 1)
                 .disabled(isEjecting)
-                .help(Text("Eject"))
-                .accessibilityLabel(Text("Eject volume"))
+                .help(Text("EJECT_VOLUME_TOOLTIP"))
+                .accessibilityLabel(Text("EJECT_BUTTON"))
                 .padding(.trailing, 8)
             } else {
                 Color.clear.frame(width: 8)
