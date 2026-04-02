@@ -18,6 +18,13 @@ struct ContentView: View {
         .background(F4KeyMonitor {
             appState.activeBrowser.showTerminal.toggle()
         })
+        .sheet(isPresented: Binding(
+            get: { appState.batchRenameState.isPresented },
+            set: { appState.batchRenameState.isPresented = $0 }
+        )) {
+            BatchRenameSheet(state: appState.batchRenameState,
+                             onApply: { await appState.applyBatchRename() })
+        }
     }
 
     // MARK: - Detail Area

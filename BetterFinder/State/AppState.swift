@@ -348,6 +348,49 @@ final class AppState {
             .map { $0 }
     }
 
+    // MARK: - Batch Rename
+
+    let batchRenameState = BatchRenameState()
+
+    func batchRenameSelectedItems() {
+        let sel = activeBrowser.selectedFileItems
+        guard !sel.isEmpty else { return }
+        batchRenameState.items = sel.map { item in
+            BatchRenameState.RenameItem(originalURL: item.url,
+                                        originalName: item.name,
+                                        newName: item.name)
+        }
+        batchRenameState.isPresented = true
+    }
+
+    func applyBatchRename() async {
+        let items = batchRenameState.items
+        let browser = activeBrowser
+        var succeeded: [(from: URL, to: URL)] = []
+
+        for item in items where item.newName != item.originalName {
+            let parent = item.originalURL.deletingLastPathComponent()
+            let newURL = parent.appendingPathComponent(item.newName)
+            if (try? FileManager.default.moveItem(at: item.originalURL, to: newURL)) != nil {
+                succeeded.append((item.originalURL, newURL))
+            }
+        }
+
+        if !succeeded.isEmpty {
+            let pairs = succeeded
+            undoManager.setActionName("Batch Rename")
+            undoManager.registerUndo(withTarget: self) { s in
+                for (from, to) in pairs {
+                    try? FileManager.default.moveItem(at: to, to: from)
+                }
+                Task { await browser.silentRefresh() }
+            }
+        }
+
+        batchRenameState.isPresented = false
+        await browser.silentRefresh()
+    }
+
     // MARK: - Tree
 
     let treeController      = TreeController()

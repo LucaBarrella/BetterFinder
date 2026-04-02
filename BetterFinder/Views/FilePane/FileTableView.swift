@@ -555,6 +555,10 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
                                   icon: "info.circle", shortcut: prefs.shortcutGetInfo))
             menu.addItem(menuItem("Rename", #selector(renameSelected),
                                   icon: "pencil", shortcut: prefs.shortcutRename))
+            if n > 1 {
+                menu.addItem(menuItem("Batch Rename...", #selector(batchRenameSelected),
+                                      icon: "pencil.and.list.clipboard"))
+            }
             menu.addItem(menuItem("Compress \"\(item.name)\"", #selector(compress),
                                   icon: "archivebox"))
             menu.addItem(menuItem("Duplicate", #selector(duplicate),
@@ -739,6 +743,11 @@ final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
 
     @objc private func renameSelected() {
         beginInlineRenameForSelection()
+    }
+
+    @objc private func batchRenameSelected() {
+        activateThisPane()
+        appState.batchRenameSelectedItems()
     }
 
     // MARK: - Inline rename
