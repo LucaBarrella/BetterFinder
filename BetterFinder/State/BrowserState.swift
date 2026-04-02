@@ -149,11 +149,7 @@ final class BrowserState {
         self.history = [HistoryEntry(url: url)]
         self.historyIndex = 0
  
-        if let vs = volumeService, let volURL = vs.volumeMountPoint(for: url) {
-            self.currentVolumeIsEjectableCache = vs.isEjectableVolume(volURL)
-        } else {
-            self.currentVolumeIsEjectableCache = nil
-        }
+        self.currentVolumeIsEjectableCache = nil
  
         var name = "zsh"
         let uid = getuid()

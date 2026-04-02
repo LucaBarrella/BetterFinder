@@ -10,3 +10,4 @@ DerivedData/
 .DS_Store
 .build/
 Packages/
+plans/

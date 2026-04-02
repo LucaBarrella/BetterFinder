@@ -15,6 +15,7 @@ final class AppState {
     /// Tracked so SwiftUI menu items can observe canUndo / canRedo reactively.
     private(set) var canUndo = false
     private(set) var canRedo = false
+    var alertPresenter: ((String, String) -> Void)?
 
     // MARK: - Browser Panes
 

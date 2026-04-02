@@ -56,19 +56,27 @@ final class VolumeService: VolumeServiceProtocol {
             VolumeService.isLocalRemovableVolumeSync(url)
         }.value
     }
-
+    
     private static nonisolated func isLocalRemovableVolumeSync(_ url: URL) -> Bool {
+        isLocalRemovableVolumeImpl(url)
+    }
+    
+    private static nonisolated func isLocalRemovableVolumeImpl(_ url: URL) -> Bool {
         let values = try? url.resourceValues(forKeys: [.volumeIsLocalKey, .volumeIsRemovableKey, .volumeIsRootFileSystemKey])
-
+    
         guard let values else { return false }
-
+    
         if values.volumeIsRootFileSystem == true { return false }
         if values.volumeIsLocal != true { return false }
-
-        return values.volumeIsRemovable == true || isExternalDriveSync(url)
+    
+        return values.volumeIsRemovable == true || isExternalDriveImpl(url)
     }
-
+    
     private static nonisolated func isExternalDriveSync(_ url: URL) -> Bool {
+        isExternalDriveImpl(url)
+    }
+    
+    private static nonisolated func isExternalDriveImpl(_ url: URL) -> Bool {
         let path = url.path(percentEncoded: false)
         return path.hasPrefix("/Volumes/") && path != "/Volumes"
     }
@@ -108,19 +116,11 @@ final class VolumeService: VolumeServiceProtocol {
     }
 
     private nonisolated func isLocalRemovableVolume(_ url: URL) -> Bool {
-        let values = try? url.resourceValues(forKeys: [.volumeIsLocalKey, .volumeIsRemovableKey, .volumeIsRootFileSystemKey])
-
-        guard let values else { return false }
-
-        if values.volumeIsRootFileSystem == true { return false }
-        if values.volumeIsLocal != true { return false }
-
-        return values.volumeIsRemovable == true || isExternalDrive(url)
+        VolumeService.isLocalRemovableVolumeSync(url)
     }
-
+    
     private nonisolated func isExternalDrive(_ url: URL) -> Bool {
-        let path = url.path(percentEncoded: false)
-        return path.hasPrefix("/Volumes/") && path != "/Volumes"
+        VolumeService.isExternalDriveSync(url)
     }
 
     private func executeUnmount(for mountPoint: URL) async throws {
@@ -232,3 +232,4 @@ final class VolumeService: VolumeServiceProtocol {
         }
     }
 }
+
