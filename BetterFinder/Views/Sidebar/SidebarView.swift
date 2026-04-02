@@ -19,7 +19,8 @@ struct SidebarView: View {
                         handleFavoriteDrop(providers)
                     }
 
-                    ForEach(appState.favoritesController.flatNodes) { flat in
+                    ForEach(Array(appState.favoritesController.flatNodes.enumerated()), id: \.offset) { item in
+                        let flat = item.element
                         TreeRow(flatNode: flat, controller: appState.favoritesController)
                             .id(flat.id)
                     }
