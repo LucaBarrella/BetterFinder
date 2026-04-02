@@ -117,6 +117,13 @@ struct BetterFinderApp: App {
                     appState.activeBrowser.navigate(to: URL.homeDirectory)
                 }
                 .keyboardShortcut("h", modifiers: [.command, .shift])
+
+                Divider()
+
+                Button("Go to Folder\u{2026}") {
+                    appState.goToFolder()
+                }
+                .keyboardShortcut("g", modifiers: [.command, .shift])
             }
 
             CommandMenu("View") {

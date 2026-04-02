@@ -232,6 +232,29 @@ final class AppState {
         activeBrowser.navigate(to: otherURL)
     }
 
+    /// Show a "Go to Folder" panel (like Finder's ⌘⇧G) that lets the user
+    /// pick or type a directory path, then navigates the active pane to it.
+    @MainActor
+    func goToFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.directoryURL = activeBrowser.currentURL
+        panel.message = "Enter a folder path or choose one:"
+        panel.prompt = "Go"
+
+        // NSOpenPanel shows a text field at the bottom where users can type a path.
+        // When they click "Go", we navigate to the selected directory.
+        panel.begin { [weak self] response in
+            guard response == .OK, let url = panel.url else { return }
+            Task { @MainActor in
+                self?.activeBrowser.navigate(to: url)
+            }
+        }
+    }
+
     /// Navigate the other pane to match the active pane (mirror).
     func mirrorActivePaneToOther() {
         guard isDualPane else { return }
