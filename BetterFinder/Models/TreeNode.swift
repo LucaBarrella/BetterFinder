@@ -14,6 +14,17 @@ final class TreeNode: Identifiable {
     var isExpanded = false
     var isLoading  = false
 
+    // MARK: - Custom Properties (for Favorites)
+
+    /// Custom SF Symbol icon name (instead of default folder icon)
+    var customIcon: String?
+
+    /// Custom accent color for this favorite
+    var customColor: Color?
+
+    /// Whether this favorite is an alias to another location
+    var isAlias: Bool = false
+
     enum Kind {
         case root           // Macintosh HD  "/"
         case volume         // external / network drive

@@ -15,6 +15,7 @@ struct SidebarView: View {
                     SidebarDropStackSection()
 
                     SectionHeader(title: "Favorites")
+                    // Note: Drag folders from Finder onto this section to add them as favorites
                     ForEach(appState.favoritesController.flatNodes) { flat in
                         TreeRow(flatNode: flat, controller: appState.favoritesController)
                             .id(flat.id)
@@ -226,6 +227,11 @@ struct TreeRow: View {
             Image(systemName: "folder.fill.badge.plus")
                 .foregroundStyle(Color.accentColor)
                 .font(.system(size: 13))
+        } else if let customIcon = node.customIcon {
+            // Custom user-selected icon
+            Image(systemName: customIcon)
+                .foregroundStyle(node.customColor ?? .secondary)
+                .font(.system(size: 13))
         } else if !node.usesSFSymbol, let icon = folderIcon {
             // Generic subfolder: native blue macOS folder icon
             Image(nsImage: icon)
@@ -363,6 +369,43 @@ struct TreeRow: View {
                 appState.activeBrowser.navigate(to: node.url)
                 appState.activeBrowser.showTerminal = true
                 appState.activeBrowser.terminalChangeDirectory?(node.url)
+            }
+            Divider()
+            // Favorites customization submenu
+            Menu("Customize") {
+                Menu("Icon") {
+                    Button("Folder (default)") { appState.updateFavorite(id: node.id, customIcon: nil) }
+                    Button("Star") { appState.updateFavorite(id: node.id, customIcon: "star.fill") }
+                    Button("Heart") { appState.updateFavorite(id: node.id, customIcon: "heart.fill") }
+                    Button("Bookmark") { appState.updateFavorite(id: node.id, customIcon: "bookmark.fill") }
+                    Button("Flag") { appState.updateFavorite(id: node.id, customIcon: "flag.fill") }
+                    Button("Pin") { appState.updateFavorite(id: node.id, customIcon: "pin.fill") }
+                    Button("Tag") { appState.updateFavorite(id: node.id, customIcon: "tag.fill") }
+                    Button("Briefcase") { appState.updateFavorite(id: node.id, customIcon: "briefcase.fill") }
+                    Button("House") { appState.updateFavorite(id: node.id, customIcon: "house.fill") }
+                    Button("Folder") { appState.updateFavorite(id: node.id, customIcon: "folder.fill") }
+                }
+                Menu("Color") {
+                    Button("None (default)") { appState.updateFavorite(id: node.id, customColor: nil) }
+                    Button("Red") { appState.updateFavorite(id: node.id, customColor: .red) }
+                    Button("Orange") { appState.updateFavorite(id: node.id, customColor: .orange) }
+                    Button("Yellow") { appState.updateFavorite(id: node.id, customColor: .yellow) }
+                    Button("Green") { appState.updateFavorite(id: node.id, customColor: .green) }
+                    Button("Blue") { appState.updateFavorite(id: node.id, customColor: .blue) }
+                    Button("Purple") { appState.updateFavorite(id: node.id, customColor: .purple) }
+                    Button("Pink") { appState.updateFavorite(id: node.id, customColor: .pink) }
+                }
+                Divider()
+                Button(node.isAlias ? "Remove Alias" : "Make Alias") {
+                    appState.updateFavorite(id: node.id, isAlias: !node.isAlias)
+                }
+            }
+            // Only show remove for favorites (not in Locations)
+            if controller === appState.favoritesController {
+                Divider()
+                Button("Remove from Favorites") {
+                    appState.removeFavorite(id: node.id)
+                }
             }
         }
         .task(id: node.url) {

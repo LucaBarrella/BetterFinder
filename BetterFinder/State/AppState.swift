@@ -540,7 +540,30 @@ final class AppState {
 
     // MARK: - Favorites
 
+    private static let favoritesKey = "sidebarFavorites"
+
     private func setupFavorites() {
+        // Load from UserDefaults or use defaults
+        let defaults = UserDefaults.standard
+        if let data = defaults.data(forKey: Self.favoritesKey),
+           let saved = try? JSONDecoder().decode([SavedFavorite].self, from: data) {
+            let nodes = saved.map { saved in
+                let node = TreeNode(url: saved.url, kind: .folder)
+                node.customIcon = saved.customIcon
+                node.isAlias = saved.isAlias
+                if let colorName = saved.colorName {
+                    node.customColor = Self.colorFromName(colorName)
+                }
+                return node
+            }
+            favoritesController.setRoots(nodes)
+        } else {
+            // Default favorites
+            setupDefaultFavorites()
+        }
+    }
+
+    private func setupDefaultFavorites() {
         let home = URL.homeDirectory
         let favURLs: [(URL, TreeNode.Kind)] = [
             (URL(fileURLWithPath: "/Applications"),       .folder),
@@ -550,6 +573,84 @@ final class AppState {
         ]
         let nodes = favURLs.map { TreeNode(url: $0.0, kind: $0.1) }
         favoritesController.setRoots(nodes)
+    }
+
+    /// Save current favorites to UserDefaults
+    func saveFavorites() {
+        let roots = favoritesController.roots
+        let saved = roots.map { node in
+            SavedFavorite(
+                url: node.url,
+                customIcon: node.customIcon,
+                isAlias: node.isAlias,
+                colorName: Self.colorName(from: node.customColor)
+            )
+        }
+        if let data = try? JSONEncoder().encode(saved) {
+            UserDefaults.standard.set(data, forKey: Self.favoritesKey)
+        }
+    }
+
+    private static func colorName(from color: Color?) -> String? {
+        guard let color = color else { return nil }
+        // Simple check - in production would use Color's == operator with standard colors
+        if color == .red { return "red" }
+        if color == .orange { return "orange" }
+        if color == .yellow { return "yellow" }
+        if color == .green { return "green" }
+        if color == .blue { return "blue" }
+        if color == .purple { return "purple" }
+        if color == .pink { return "pink" }
+        return nil
+    }
+
+    private static func colorFromName(_ name: String) -> Color? {
+        switch name {
+        case "red": return .red
+        case "orange": return .orange
+        case "yellow": return .yellow
+        case "green": return .green
+        case "blue": return .blue
+        case "purple": return .purple
+        case "pink": return .pink
+        default: return nil
+        }
+    }
+
+    /// Add a folder to favorites (called on drag & drop)
+    func addFavorite(url: URL) {
+        // Check if already exists
+        if favoritesController.roots.contains(where: { $0.url == url }) { return }
+
+        let node = TreeNode(url: url, kind: .folder)
+        var newRoots = favoritesController.roots + [node]
+        favoritesController.setRoots(newRoots)
+        saveFavorites()
+    }
+
+    /// Remove a favorite by ID
+    func removeFavorite(id: UUID) {
+        var newRoots = favoritesController.roots.filter { $0.id != id }
+        favoritesController.setRoots(newRoots)
+        saveFavorites()
+    }
+
+    /// Update custom properties for a favorite
+    func updateFavorite(id: UUID, customIcon: String? = nil, customColor: Color? = nil, isAlias: Bool? = nil) {
+        guard let node = favoritesController.roots.first(where: { $0.id == id }) else { return }
+        if let icon = customIcon { node.customIcon = icon }
+        if let color = customColor { node.customColor = color }
+        if let alias = isAlias { node.isAlias = alias }
+        saveFavorites()
+    }
+
+    // MARK: - Private
+
+    private struct SavedFavorite: Codable {
+        let url: URL
+        var customIcon: String?
+        var isAlias: Bool
+        var colorName: String?  // "red", "blue", etc - or nil for default
     }
 
     func ejectVolume(for url: URL) async {

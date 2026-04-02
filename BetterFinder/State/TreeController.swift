@@ -18,12 +18,14 @@ final class TreeController {
     // MARK: - State
 
     private(set) var flatNodes: [FlatNode] = []
-    private var roots: [TreeNode] = []
+    private var _roots: [TreeNode] = []
+
+    var roots: [TreeNode] { _roots }
 
     // MARK: - Setup
 
     func setRoots(_ newRoots: [TreeNode]) {
-        roots = newRoots
+        _roots = newRoots
         rebuild()
     }
 
