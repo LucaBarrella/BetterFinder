@@ -41,6 +41,9 @@ final class BrowserState {
     /// Set by FileTableView.Coordinator. Triggers inline rename on the currently selected row.
     var triggerInlineRename: (() -> Void)?
 
+    /// Set by PathBarView. Triggers path bar editing with autocomplete.
+    var triggerPathEdit: (() -> Void)?
+
     /// Called by AppState to track recent folders whenever the user navigates.
     var onNavigate: ((URL) -> Void)?
 

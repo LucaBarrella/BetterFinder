@@ -6,6 +6,13 @@ struct PathBarView: View {
 
     @State private var isEditing = false
     @State private var editText  = ""
+    @State private var suggestions: [PathSuggestion] = []
+    @State private var history: [String] = []
+    @State private var selectedIndex: Int = 0
+
+    private static let historyKey = "goToFolderHistory"
+    private static let maxHistory = 10
+    private static let maxSuggestions = 8
 
     private var pathComponents: [(name: String, url: URL)] {
         var result: [(name: String, url: URL)] = []
@@ -33,16 +40,29 @@ struct PathBarView: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            if isEditing {
-                editingBar
-            } else {
-                breadcrumbs
-                copyButton
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                if isEditing {
+                    editingBar
+                } else {
+                    breadcrumbs
+                    copyButton
+                }
+            }
+            .frame(height: 30)
+            .background(.bar)
+
+            if isEditing, !suggestions.isEmpty {
+                suggestionDropdown
             }
         }
-        .frame(height: 30)
-        .background(.bar)
+        .onAppear {
+            browser.triggerPathEdit = { startEditing() }
+        }
+        .onChange(of: editText) { _, newValue in
+            updateSuggestions(for: newValue)
+            selectedIndex = 0
+        }
     }
 
     // MARK: - Copy Button
@@ -106,7 +126,7 @@ struct PathBarView: View {
         }
     }
 
-    // MARK: - Editing
+    // MARK: - Editing Bar
 
     private var editingBar: some View {
         HStack(spacing: 6) {
@@ -119,6 +139,7 @@ struct PathBarView: View {
                 .textFieldStyle(.plain)
                 .font(.system(size: 12, design: .monospaced))
                 .onSubmit { commitEdit() }
+                .onExitCommand { isEditing = false }
 
             Button("Cancel") { isEditing = false }
                 .buttonStyle(.plain)
@@ -128,8 +149,126 @@ struct PathBarView: View {
         }
     }
 
+    // MARK: - Suggestion Dropdown
+
+    private var suggestionDropdown: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(suggestions.enumerated()), id: \.offset) { index, suggestion in
+                    suggestionRow(suggestion, index: index)
+                }
+            }
+        }
+        .frame(maxHeight: 200)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 6))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+        .padding(.horizontal, 8)
+    }
+
+    private func suggestionRow(_ suggestion: PathSuggestion, index: Int) -> some View {
+        Button {
+            editText = suggestion.path
+            commitEdit()
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: suggestion.isHistory ? "clock" : "folder")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 14)
+
+                Text(suggestion.displayName)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .truncationMode(.head)
+
+                Spacer()
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                index == selectedIndex
+                    ? Color.accentColor.opacity(0.15)
+                    : Color.clear
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            if hovering { selectedIndex = index }
+        }
+    }
+
+    // MARK: - Suggestions Logic
+
+    private func updateSuggestions(for input: String) {
+        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmed.isEmpty else {
+            // Show history when field is empty
+            suggestions = history.map { path in
+                let name = (path as NSString).lastPathComponent.isEmpty ? path : (path as NSString).lastPathComponent
+                return PathSuggestion(path: path, displayName: name, isHistory: true)
+            }
+            return
+        }
+
+        let expanded = NSString(string: trimmed).expandingTildeInPath
+        let fm = FileManager.default
+
+        // Determine parent directory and partial name to match
+        var searchDir: String
+        var partial: String
+
+        if trimmed.hasSuffix("/") {
+            // Typing inside a directory — enumerate that directory
+            searchDir = expanded
+            partial = ""
+        } else {
+            searchDir = (expanded as NSString).deletingLastPathComponent
+            partial = (expanded as NSString).lastPathComponent.lowercased()
+        }
+
+        guard let contents = try? fm.contentsOfDirectory(atPath: searchDir) else {
+            suggestions = []
+            return
+        }
+
+        let baseURL = URL(fileURLWithPath: searchDir)
+        var results: [PathSuggestion] = []
+
+        for name in contents.sorted() {
+            // Skip hidden unless the user typed a dot
+            if name.hasPrefix(".") && !partial.hasPrefix(".") { continue }
+
+            if partial.isEmpty || name.lowercased().hasPrefix(partial) {
+                let fullPath = baseURL.appendingPathComponent(name).path
+                var isDir: ObjCBool = false
+                fm.fileExists(atPath: fullPath, isDirectory: &isDir)
+                if isDir.boolValue {
+                    results.append(PathSuggestion(path: fullPath, displayName: name, isHistory: false))
+                    if results.count >= Self.maxSuggestions { break }
+                }
+            }
+        }
+
+        suggestions = results
+    }
+
+    // MARK: - Editing Actions
+
     private func startEditing() {
-        editText  = browser.currentURL.path(percentEncoded: false)
+        editText = browser.currentURL.path(percentEncoded: false)
+        history = UserDefaults.standard.stringArray(forKey: Self.historyKey) ?? []
+        suggestions = history.map { path in
+            let name = (path as NSString).lastPathComponent.isEmpty ? path : (path as NSString).lastPathComponent
+            return PathSuggestion(path: path, displayName: name, isHistory: true)
+        }
+        selectedIndex = 0
         isEditing = true
     }
 
@@ -137,10 +276,25 @@ struct PathBarView: View {
         let expanded = NSString(string: editText).expandingTildeInPath
         var isDir: ObjCBool = false
         if FileManager.default.fileExists(atPath: expanded, isDirectory: &isDir), isDir.boolValue {
+            // Save to history
+            var recent = UserDefaults.standard.stringArray(forKey: Self.historyKey) ?? []
+            recent.removeAll { $0 == expanded }
+            recent.insert(expanded, at: 0)
+            if recent.count > Self.maxHistory { recent = Array(recent.prefix(Self.maxHistory)) }
+            UserDefaults.standard.set(recent, forKey: Self.historyKey)
+
             browser.navigate(to: URL(fileURLWithPath: expanded))
         }
         isEditing = false
     }
+}
+
+// MARK: - Path Suggestion Model
+
+private struct PathSuggestion {
+    let path: String
+    let displayName: String
+    let isHistory: Bool
 }
 
 #Preview {

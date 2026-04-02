@@ -232,36 +232,9 @@ final class AppState {
         activeBrowser.navigate(to: otherURL)
     }
 
-    /// Show a "Go to Folder" dialog (like Finder's ⌘⇧G) that lets the user
-    /// type a directory path, then navigates the active pane to it.
-    @MainActor
+    /// Trigger path bar editing mode in the active pane (⌘⇧G).
     func goToFolder() {
-        let alert = NSAlert()
-        alert.messageText = "Go to Folder"
-        alert.informativeText = "Enter the path of the folder you want to open:"
-        alert.alertStyle = .informational
-        alert.addButton(withTitle: "Go")
-        alert.addButton(withTitle: "Cancel")
-
-        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 320, height: 24))
-        textField.placeholderString = "/path/to/folder"
-        textField.font = .monospacedSystemFont(ofSize: 13, weight: .regular)
-        textField.stringValue = activeBrowser.currentURL.path(percentEncoded: false)
-        alert.accessoryView = textField
-
-        // Make the text field the first responder so the user can type immediately
-        alert.window.initialFirstResponder = textField
-
-        guard alert.runModal() == .alertFirstButtonReturn else { return }
-
-        let input = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !input.isEmpty else { return }
-
-        let expanded = NSString(string: input).expandingTildeInPath
-        var isDir: ObjCBool = false
-        if FileManager.default.fileExists(atPath: expanded, isDirectory: &isDir), isDir.boolValue {
-            activeBrowser.navigate(to: URL(fileURLWithPath: expanded))
-        }
+        activeBrowser.triggerPathEdit?()
     }
 
     /// Navigate the other pane to match the active pane (mirror).
