@@ -138,8 +138,29 @@ struct PathBarView: View {
             TextField("Path", text: $editText)
                 .textFieldStyle(.plain)
                 .font(.system(size: 12, design: .monospaced))
-                .onSubmit { commitEdit() }
+                .onSubmit {
+                    if !suggestions.isEmpty {
+                        editText = suggestions[selectedIndex].path
+                    }
+                    commitEdit()
+                }
                 .onExitCommand { isEditing = false }
+                .onKeyPress(.upArrow) {
+                    guard !suggestions.isEmpty else { return .ignored }
+                    selectedIndex = max(0, selectedIndex - 1)
+                    return .handled
+                }
+                .onKeyPress(.downArrow) {
+                    guard !suggestions.isEmpty else { return .ignored }
+                    selectedIndex = min(suggestions.count - 1, selectedIndex + 1)
+                    return .handled
+                }
+                .onKeyPress(.tab) {
+                    guard !suggestions.isEmpty else { return .ignored }
+                    editText = suggestions[selectedIndex].path
+                    updateSuggestions(for: editText)
+                    return .handled
+                }
 
             Button("Cancel") { isEditing = false }
                 .buttonStyle(.plain)
@@ -152,14 +173,17 @@ struct PathBarView: View {
     // MARK: - Suggestion Dropdown
 
     private var suggestionDropdown: some View {
-        ScrollView {
+        let rowHeight: CGFloat = 28
+        let dynamicHeight = min(CGFloat(suggestions.count) * rowHeight, 200)
+
+        return ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(suggestions.enumerated()), id: \.offset) { index, suggestion in
                     suggestionRow(suggestion, index: index)
                 }
             }
         }
-        .frame(maxHeight: 200)
+        .frame(height: dynamicHeight)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 6))
         .overlay(
             RoundedRectangle(cornerRadius: 6)
