@@ -424,6 +424,11 @@ final class AppState {
         let prefs = preferences
         isDualPane = prefs.startInDualPane
 
+        primaryBrowser.sortColumnID    = prefs.defaultSortColumn.rawValue
+        primaryBrowser.sortAscending   = prefs.defaultSortAscending
+        secondaryBrowser.sortColumnID  = prefs.defaultSortColumn.rawValue
+        secondaryBrowser.sortAscending = prefs.defaultSortAscending
+
         let defaultOpts = prefs.defaultSearchOptions
         primaryBrowser.searchOptions   = defaultOpts
         secondaryBrowser.searchOptions = defaultOpts
@@ -723,6 +728,30 @@ final class AppState {
         for browser in browsers {
             browser.checkVolumeAvailability()
             Task { await browser.silentRefresh() }
+        }
+    }
+
+    // MARK: - Default File Viewer
+
+    /// Called by AppDelegate when the system routes a "Reveal in Finder" request
+    /// (or any folder/file open) to BetterFinder because it is the registered default file viewer.
+    @MainActor
+    func revealURL(_ url: URL) {
+        NSApp.activate(ignoringOtherApps: true)
+
+        var isDir: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir)
+        guard exists else { return }
+
+        let browser = activeBrowser
+
+        if isDir.boolValue {
+            browser.navigate(to: url)
+        } else {
+            // Navigate to parent and mark the file for selection once loaded
+            let parent = url.deletingLastPathComponent()
+            browser.pendingRevealURL = url
+            browser.navigate(to: parent)
         }
     }
 }

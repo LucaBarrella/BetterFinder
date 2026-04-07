@@ -56,16 +56,26 @@ struct FilePaneView: View {
                 } else if let err = browser.error {
                     errorView(message: err)
                 } else {
-                    FileTableView(
-                        browser: browser,
-                        items: sortedItems,
-                        appState: appState,
-                        showLocationInKindColumn: isGlobalSearch
-                    )
-                    .overlay {
-                        if sortedItems.isEmpty {
-                            emptyView.allowsHitTesting(false)
+                    switch appState.preferences.viewMode {
+                    case .list:
+                        FileTableView(
+                            browser: browser,
+                            items: sortedItems,
+                            appState: appState,
+                            showLocationInKindColumn: isGlobalSearch
+                        )
+                        .overlay {
+                            if sortedItems.isEmpty {
+                                emptyView.allowsHitTesting(false)
+                            }
                         }
+                    case .icons:
+                        FileIconGridView(browser: browser, items: sortedItems, appState: appState)
+                            .overlay {
+                                if sortedItems.isEmpty {
+                                    emptyView.allowsHitTesting(false)
+                                }
+                            }
                     }
                 }
             }

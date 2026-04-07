@@ -23,10 +23,43 @@ struct PreferencesView: View {
 
 private struct GeneralPrefsTab: View {
     @Environment(AppState.self) private var appState
+    @State private var isDefaultViewer = DefaultFileViewerService.shared.isRegistered
 
     var body: some View {
         @Bindable var prefs = appState.preferences
         Form {
+            Section {
+                HStack {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Default File Manager")
+                            .font(.body)
+                        Text("\"Reveal in Finder\" from any app will open BetterFinder instead.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Toggle("", isOn: $isDefaultViewer)
+                        .labelsHidden()
+                        .onChange(of: isDefaultViewer) { _, enabled in
+                            if enabled {
+                                DefaultFileViewerService.shared.register()
+                            } else {
+                                DefaultFileViewerService.shared.unregister()
+                            }
+                        }
+                }
+            } header: {
+                Text("System Integration")
+            }
+            Section("Sorting") {
+                Picker("Default sort by", selection: $prefs.defaultSortColumn) {
+                    ForEach(AppPreferences.SortColumn.allCases, id: \.self) { col in
+                        Text(col.label).tag(col)
+                    }
+                }
+                .pickerStyle(.menu)
+                Toggle("Ascending order by default", isOn: $prefs.defaultSortAscending)
+            }
             Section("View") {
                 Toggle("Show hidden files (dot files)", isOn: $prefs.showHiddenFiles)
                 Toggle("Show path bar",                 isOn: $prefs.showPathBar)

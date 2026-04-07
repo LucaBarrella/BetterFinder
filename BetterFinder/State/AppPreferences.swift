@@ -37,6 +37,15 @@ final class AppPreferences {
         didSet { ud.set(maxRecentFolders, forKey: Keys.maxRecentFolders) }
     }
 
+    // MARK: - Sorting
+
+    var defaultSortColumn: SortColumn = .dateModified {
+        didSet { ud.set(defaultSortColumn.rawValue, forKey: Keys.defaultSortColumn) }
+    }
+    var defaultSortAscending: Bool = false {
+        didSet { ud.set(defaultSortAscending, forKey: Keys.defaultSortAscending) }
+    }
+
     // MARK: - Search defaults
 
     var defaultSearchScope: SearchOptions.SearchScope = .currentFolder {
@@ -123,6 +132,8 @@ final class AppPreferences {
         openTerminalByDefault  = ud.bool(forKey: Keys.openTerminalByDefault)
         showPreviewPanel       = ud.bool(forKey: Keys.showPreviewPanel)
         maxRecentFolders       = ud.object(forKey: Keys.maxRecentFolders) as? Int ?? 10
+        defaultSortColumn    = SortColumn(rawValue: ud.string(forKey: Keys.defaultSortColumn) ?? "") ?? .dateModified
+        defaultSortAscending = ud.object(forKey: Keys.defaultSortAscending) as? Bool ?? false
         defaultSearchScope     = SearchOptions.SearchScope(rawValue:
                                      ud.string(forKey: Keys.defaultSearchScope) ?? "") ?? .currentFolder
         defaultSearchMatchMode = SearchOptions.MatchMode(rawValue:
@@ -163,6 +174,30 @@ final class AppPreferences {
 
     // MARK: - Types
 
+    enum SortColumn: String, CaseIterable {
+        case name         = "name"
+        case dateModified = "date"
+        case size         = "size"
+        case kind         = "kind"
+
+        var label: String {
+            switch self {
+            case .name:         return "Name"
+            case .dateModified: return "Date Modified"
+            case .size:         return "Size"
+            case .kind:         return "Kind"
+            }
+        }
+
+        /// Sensible default direction for each column
+        var defaultAscending: Bool {
+            switch self {
+            case .name, .kind: return true
+            case .dateModified, .size: return false
+            }
+        }
+    }
+
     enum ViewMode: String, CaseIterable {
         case list, icons
 
@@ -184,6 +219,8 @@ final class AppPreferences {
     // MARK: - Keys
 
     private enum Keys {
+        static let defaultSortColumn     = "defaultSortColumn"
+        static let defaultSortAscending  = "defaultSortAscending"
         static let showHiddenFiles       = "showHiddenFiles"
         static let foldersFirst          = "foldersFirst"
         static let viewMode              = "viewMode"

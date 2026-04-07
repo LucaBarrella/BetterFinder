@@ -25,6 +25,25 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 
+	<!-- Declare support for opening folders so Launch Services accepts us
+	     as a valid handler when the user sets us as default file viewer. -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.folder</string>
+				<string>public.directory</string>
+			</array>
+		</dict>
+	</array>
+
 	<!-- Register BetterFinder as a macOS Service so it appears in the
 	     right-click menu of any Cocoa app when files are selected. -->
 	<key>NSServices</key>

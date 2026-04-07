@@ -38,6 +38,19 @@ struct BrowserToolbar: ToolbarContent {
             }
         }
 
+        // View mode
+        ToolbarItem(placement: .primaryAction) {
+            @Bindable var prefs = appState.preferences
+            Picker("View", selection: $prefs.viewMode) {
+                ForEach(AppPreferences.ViewMode.allCases, id: \.self) { mode in
+                    Image(systemName: mode.systemImage).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 58)
+            .help("Switch view mode")
+        }
+
         // Actions
         ToolbarItemGroup(placement: .primaryAction) {
             // Swap panes — only in dual-pane mode

@@ -24,6 +24,9 @@ final class BrowserState {
     var sortColumnID: String = "name"   // matches NSTableColumn identifier
     var sortAscending: Bool  = true
 
+    /// Set before navigating to a parent folder to auto-select a specific item after load.
+    var pendingRevealURL: URL?
+
     private var searchTask: Task<Void, Never>?
 
     // MARK: - Terminal
@@ -296,6 +299,14 @@ final class BrowserState {
 
         isLoading = false
         updateWatcher()
+
+        if let target = pendingRevealURL {
+            pendingRevealURL = nil
+            if let item = items.first(where: { $0.url.standardizedFileURL == target.standardizedFileURL }) {
+                selectedItems = [item.id]
+                lastSelectedURL = target
+            }
+        }
     }
 
     /// Refreshes the directory listing without showing a loading indicator.

@@ -1,7 +1,32 @@
 import SwiftUI
 
+// MARK: - App Delegate
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    var appState: AppState?
+
+    /// Called when the system routes a folder/file open request to BetterFinder
+    /// (e.g. "Reveal in Finder" from Xcode, VS Code, double-clicking a folder on the Dock).
+    func application(_ sender: NSApplication, openFiles filenames: [String]) {
+        guard let appState else { return }
+        for filename in filenames {
+            appState.revealURL(URL(fileURLWithPath: filename))
+        }
+        NSApp.reply(toOpenOrPrint: .success)
+    }
+
+    func application(_ sender: NSApplication, openFile filename: String) -> Bool {
+        guard let appState else { return false }
+        appState.revealURL(URL(fileURLWithPath: filename))
+        return true
+    }
+}
+
+// MARK: - App Entry Point
+
 @main
 struct BetterFinderApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var appState = AppState()
     @State private var serviceProvider = ServiceProvider()
     @State private var hotkeyManager: GlobalHotkeyManager?
@@ -19,6 +44,8 @@ struct BetterFinderApp: App {
                     }
                 }
                 .onAppear {
+                    appDelegate.appState = appState
+
                     // Show Full Disk Access prompt on first launch if not already granted
                     if !hasPromptedFDA && !FullDiskAccessChecker.isGranted() {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
