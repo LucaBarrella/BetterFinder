@@ -28,10 +28,10 @@ final class DefaultFileViewerService {
         writeGlobalDefault("NSFileViewer", value: bundleID)
 
         // 2. Launch Services — folder double-click, Dock, NSWorkspace.open
-        NSWorkspace.shared.setDefaultApplication(
-            at: Bundle.main.bundleURL,
-            toOpen: UTType.folder
-        ) { error in
+        //    Register both public.folder and public.directory: VS Code-based apps use the latter.
+        let appURL = Bundle.main.bundleURL
+        NSWorkspace.shared.setDefaultApplication(at: appURL, toOpen: UTType.folder) { _ in }
+        NSWorkspace.shared.setDefaultApplication(at: appURL, toOpen: UTType.directory) { error in
             if let error {
                 print("[DefaultFileViewerService] LSHandlers error: \(error.localizedDescription)")
             }
@@ -42,9 +42,10 @@ final class DefaultFileViewerService {
         // 1. Delete NSFileViewer so the system falls back to Finder
         deleteGlobalDefault("NSFileViewer")
 
-        // 2. Restore Finder in Launch Services
+        // 2. Restore Finder for both public.folder and public.directory
         if let finderURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.finder") {
             NSWorkspace.shared.setDefaultApplication(at: finderURL, toOpen: UTType.folder) { _ in }
+            NSWorkspace.shared.setDefaultApplication(at: finderURL, toOpen: UTType.directory) { _ in }
         }
     }
 
