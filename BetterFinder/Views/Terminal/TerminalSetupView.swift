@@ -1,6 +1,7 @@
 import SwiftUI
 import AppKit
 import Foundation
+import Darwin
 
 struct TerminalSetupView: View {
     let browser: BrowserState
@@ -12,6 +13,8 @@ struct TerminalSetupView: View {
     @State private var isHomebrewInstalled = false
     @State private var isAutocompleteInstalled = false
     @State private var isKilocodeInstalled = false
+    
+    @State private var currentShell: ShellType = .zsh
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -34,16 +37,29 @@ struct TerminalSetupView: View {
                     }
                 )
                 
-                ToolRow(
-                    title: "Zsh Autocomplete",
-                    description: "Fish-like fast/unobtrusive autosuggestions for zsh.",
-                    icon: "text.cursor",
-                    isWorking: isInstallingAutocomplete,
-                    isInstalled: isAutocompleteInstalled,
-                    action: {
-                        installAutocomplete()
-                    }
-                )
+                // Only show zsh-autosuggestions if using zsh
+                if currentShell == .zsh {
+                    ToolRow(
+                        title: "Zsh Autocomplete",
+                        description: "Fish-like fast/unobtrusive autosuggestions for zsh.",
+                        icon: "text.cursor",
+                        isWorking: isInstallingAutocomplete,
+                        isInstalled: isAutocompleteInstalled,
+                        action: {
+                            installAutocomplete()
+                        }
+                    )
+                } else {
+                    // Show message for other shells
+                    ToolRow(
+                        title: "Shell Autocomplete",
+                        description: "Autocomplete is built-in for \(currentShell.displayName).",
+                        icon: "text.cursor",
+                        isWorking: false,
+                        isInstalled: true,
+                        action: {}
+                    )
+                }
                 
                 ToolRow(
                     title: "Kilocode CLI",
@@ -61,7 +77,46 @@ struct TerminalSetupView: View {
         .padding()
         .frame(width: 320)
         .onAppear {
+            detectCurrentShell()
             checkInstalledTools()
+        }
+    }
+    
+    private func detectCurrentShell() {
+        let uid = getuid()
+        var buf = [CChar](repeating: 0, count: 1024)
+        var pw = passwd()
+        var ptr: UnsafeMutablePointer<passwd>?
+        
+        if getpwuid_r(uid, &pw, &buf, buf.count, &ptr) == 0, let p = ptr {
+            let shellPath = String(cString: p.pointee.pw_shell)
+            let shellName = URL(fileURLWithPath: shellPath).lastPathComponent.lowercased()
+            
+            switch shellName {
+            case "zsh":
+                currentShell = .zsh
+            case "bash":
+                currentShell = .bash
+            case "fish":
+                currentShell = .fish
+            default:
+                currentShell = .other(shellName)
+            }
+        } else {
+            // Fallback to environment variable
+            if let shellEnv = ProcessInfo.processInfo.environment["SHELL"] {
+                let shellName = URL(fileURLWithPath: shellEnv).lastPathComponent.lowercased()
+                switch shellName {
+                case "zsh":
+                    currentShell = .zsh
+                case "bash":
+                    currentShell = .bash
+                case "fish":
+                    currentShell = .fish
+                default:
+                    currentShell = .other(shellName)
+                }
+            }
         }
     }
     
@@ -76,6 +131,9 @@ struct TerminalSetupView: View {
     }
     
     private func checkAutocompleteInstalled() -> Bool {
+        // Only check for zsh-autosuggestions if using zsh
+        guard currentShell == .zsh else { return false }
+        
         // Check manual installation
         if checkDirectoryExists("~/.zsh/zsh-autosuggestions") {
             return true
@@ -153,6 +211,18 @@ struct TerminalSetupView: View {
     }
     
     private func installAutocomplete() {
+        guard currentShell == .zsh else {
+            // Show message that autocomplete is not available for this shell
+            let script = """
+            echo "Zsh Autocomplete is only available for zsh shell."
+            echo "Your current shell is: \(currentShell.displayName)"
+            echo ""
+            echo "For \(currentShell.displayName), autocomplete is built-in or requires different setup."
+            """
+            browser.terminalSendText?(script + "\r")
+            return
+        }
+        
         isInstallingAutocomplete = true
         // Try Homebrew first, fall back to manual installation
         let script = "brew install zsh-autosuggestions 2>/dev/null || (git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions && echo 'source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh' >> ~/.zshrc && source ~/.zshrc)"
@@ -195,6 +265,26 @@ struct TerminalSetupView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             isInstallingKilocode = false
             checkInstalledTools()
+        }
+    }
+}
+
+enum ShellType: Equatable {
+    case zsh
+    case bash
+    case fish
+    case other(String)
+    
+    var displayName: String {
+        switch self {
+        case .zsh:
+            return "zsh"
+        case .bash:
+            return "bash"
+        case .fish:
+            return "fish"
+        case .other(let name):
+            return name
         }
     }
 }
