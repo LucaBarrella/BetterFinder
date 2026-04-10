@@ -11,6 +11,7 @@ struct SidebarView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 0) {
+                    Color.clear.frame(height: 4)
 
                     SidebarDropStackSection()
 

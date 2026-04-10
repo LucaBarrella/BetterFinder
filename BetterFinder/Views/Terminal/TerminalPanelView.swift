@@ -81,6 +81,13 @@ private struct TerminalHeaderBar: View {
 
             // Font size
             TerminalButton(
+                icon: "textformat.size.larger",
+                tooltip: "Increase font size (⌘+)"
+            ) {
+                browser.terminalFontSize = min(24, browser.terminalFontSize + 1)
+            }
+
+            TerminalButton(
                 icon: "textformat.size.smaller",
                 tooltip: "Decrease font size (⌘-)"
             ) {
