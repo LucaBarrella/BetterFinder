@@ -22,7 +22,7 @@ struct ContentView: View {
             case .clearTerminal:
                 appState.activeBrowser.terminalSendText?("clear\r")
             case .focusTerminal:
-                appState.activeBrowser.showTerminal.toggle()
+                appState.activeBrowser.showTerminal = true
             case .terminalFontUp:
                 appState.activeBrowser.terminalFontSize = min(24, appState.activeBrowser.terminalFontSize + 1)
             case .terminalFontDown:

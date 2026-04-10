@@ -234,8 +234,16 @@ struct TerminalSetupView: View {
         }
         
         isInstallingAutocomplete = true
-        // Try Homebrew first, fall back to manual installation
-        let script = "brew install zsh-autosuggestions 2>/dev/null || (git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions && echo 'source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh' >> ~/.zshrc && source ~/.zshrc)"
+        // Try Homebrew first, fall back to manual installation (idempotent)
+        let script = """
+        if ! brew list zsh-autosuggestions &>/dev/null && [ ! -d ~/.zsh/zsh-autosuggestions ]; then
+            brew install zsh-autosuggestions 2>/dev/null || git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+        fi
+        if ! grep -q 'zsh-autosuggestions' ~/.zshrc 2>/dev/null; then
+            echo 'source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh' >> ~/.zshrc
+        fi
+        source ~/.zshrc
+        """
         browser.terminalSendText?(script + "\r")
 
         pollUntilInstalled(check: { self.checkAutocompleteInstalled(for: self.currentShell) }) { installed in

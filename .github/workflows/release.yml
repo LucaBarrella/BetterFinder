@@ -49,12 +49,13 @@ jobs:
 
       - name: Sign Appcast
         run: |
-          # Write the private key to a temporary file with proper PEM format
-          echo "${{ secrets.SPARKLE_PRIVATE_KEY }}" > /tmp/sparkle_private_key.pem
+          # The secret should be stored as a complete PEM key (including -----BEGIN/END PRIVATE KEY----- and newlines)
+          printf '%s\n' "$SPARKLE_PRIVATE_KEY" > /tmp/sparkle_private_key.pem
           sign_update build/appcast.xml \
             --private-key-path /tmp/sparkle_private_key.pem
-          # Clean up the temporary key file
           rm /tmp/sparkle_private_key.pem
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

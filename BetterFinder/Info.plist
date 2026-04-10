@@ -27,7 +27,7 @@
 
 	<!-- Sparkle Auto-Update Configuration -->
 	<key>SUFeedURL</key>
-	<string>https://github.com/LucaBarrella/BetterFinder/releases.atom</string>
+	<string>https://github.com/LucaBarrella/BetterFinder/releases/latest/download/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<!-- IMPORTANT: Replace this placeholder with your actual Ed25519 public key before releasing -->
 	<!-- Generate keys using bin/generate_keys.sh and paste the public key here -->

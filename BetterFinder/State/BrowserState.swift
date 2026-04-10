@@ -304,11 +304,16 @@ final class BrowserState {
         if let target = pendingRevealURL {
             pendingRevealURL = nil
             
-            // Use case-insensitive path comparison for better matching
-            let targetPath = target.path.lowercased()
-            if let item = items.first(where: { $0.url.path.lowercased() == targetPath }) {
+            // Try exact path match first, then fall back to case-insensitive
+            if let item = items.first(where: { $0.url.path == target.path }) {
                 selectedItems = [item.id]
                 lastSelectedURL = target
+            } else {
+                let targetPath = target.path.lowercased()
+                if let item = items.first(where: { $0.url.path.lowercased() == targetPath }) {
+                    selectedItems = [item.id]
+                    lastSelectedURL = target
+                }
             }
         }
     }
