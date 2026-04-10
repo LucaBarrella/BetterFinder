@@ -756,7 +756,6 @@ final class AppState {
         if isDir.boolValue {
             browser.navigate(to: url)
         } else {
-            // Navigate to parent and mark the file for selection once loaded
             let parent = url.deletingLastPathComponent()
             browser.pendingRevealURL = url
             browser.navigate(to: parent)
