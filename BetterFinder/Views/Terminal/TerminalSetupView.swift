@@ -42,8 +42,8 @@ struct TerminalSetupView: View {
                 // Only show zsh-autosuggestions if using zsh
                 if currentShell == .zsh {
                     ToolRow(
-                        title: "Zsh Autocomplete",
-                        description: "Zsh-autosuggestions plugin for zsh.",
+                        title: "Zsh Autosuggestions",
+                        description: "Fish-like fast autosuggestions for zsh.",
                         icon: "text.cursor",
                         isWorking: isInstallingAutocomplete,
                         isInstalled: isAutocompleteInstalled,
@@ -54,11 +54,11 @@ struct TerminalSetupView: View {
                 } else {
                     // Show message for other shells
                     ToolRow(
-                        title: "Shell Autocomplete",
-                        description: "Autocomplete is built-in for \(currentShell.displayName).",
+                        title: "Shell Autosuggestions",
+                        description: "This feature requires zsh as your default shell.",
                         icon: "text.cursor",
                         isWorking: false,
-                        isInstalled: true,
+                        isInstalled: false,
                         action: {}
                     )
                 }

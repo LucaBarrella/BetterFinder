@@ -2,8 +2,8 @@ import SwiftUI
 
 // MARK: - Updates Preferences Tab
 
-// Note: UpdateManager depends on Sparkle framework. This error will resolve
-// automatically when you open the project in Xcode and it downloads the SPM dependencies.
+// MARK: - Dependencies
+// UpdateManager requires the Sparkle SPM package to be resolved.
 
 struct UpdatesPreferencesView: View {
     @Bindable var updateManager: UpdateManager

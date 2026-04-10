@@ -166,7 +166,7 @@ struct BetterFinderApp: App {
 
             CommandMenu("View") {
                 Button("Enter Full Screen") {
-                    if let window = NSApp.windows.first {
+                    if let window = NSApp.keyWindow {
                         window.toggleFullScreen(nil)
                     }
                 }
